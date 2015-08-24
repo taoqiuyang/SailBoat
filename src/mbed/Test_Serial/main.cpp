@@ -3,6 +3,9 @@
 #include <sstream>
 #include <vector>
 #define MAX_IMU_SIZE 28
+#define MAX_GPS_GPGGA_SIZE 72
+#define MAX_GPS_GPGSV_SIZE 210
+#define MAX_GPS_GPRMC_SIZE 70
 
 DigitalOut led1(LED1);
 DigitalOut led2(LED2);
@@ -17,9 +20,9 @@ char IMU_message[256];
 int  IMU_message_counter=0;
 char GPS_message[256];
 int  GPS_message_counter=0;
-string IMU_Y;
-string IMU_P;
-string IMU_R;
+string IMU_Y="Not ready";
+string IMU_P="Not ready";
+string IMU_R="Not ready";
 
 vector<string> split(const string &s, char delim) {
     stringstream ss(s);
@@ -42,9 +45,34 @@ void updateIMU(string IMU_data) {
         }
 }
 
+void updateGPS(string GPS_data) {
+    string GPS_data_string(GPS_data);
+    if (GPS_data_string.substr(0,6) == "$GPGGA" and GPS_data_string.size() <= MAX_GPS_GPGGA_SIZE) {
+        GPS_data_string = IMU_data_string.substr(5);
+        vector<string> result = split(GPS_data_string, ',');
+        IMU_Y = result.at(0);
+        IMU_P = result.at(1);
+        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
+    } else if (GPS_data_string.substr(0,6) == "%GPGSV" and GPS_data_string.size() <= MAX_GPS_GPGSV_SIZE) {
+        GPS_data_string = IMU_data_string.substr(5);
+        vector<string> result = split(GPS_data_string, ',');
+        IMU_Y = result.at(0);
+        IMU_P = result.at(1);
+        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
+    } else if (GPS_data_string.substr(0,6) == "%GPRMC" and GPS_data_string.size() <= MAX_GPS_GPRMC_SIZE) {
+        GPS_data_string = IMU_data_string.substr(5);
+        vector<string> result = split(GPS_data_string, ',');
+        IMU_Y = result.at(0);
+        IMU_P = result.at(1);
+        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
+    }
+}
+
 void printState() {
     pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y,IMU_P,IMU_R);
  }
+ 
+ 
  //#YPR=-183.-174,-134.27,-114.39
 void IMU_serial_ISR() {
     char buf;
@@ -76,7 +104,19 @@ void GPS_serial_ISR() {
     
      while (GPS.readable()) {
         buf = GPS.getc();
-        //pc.putc(buf);    
+        
+
+        GPS_message[GPS_message_counter]=buf;
+        GPS_message_counter+=1;
+        
+        if (buf=='\n'){
+            string GPS_copy(GPS_message, GPS_message_counter);
+            //pc.printf("%s\n", IMU_copy);
+            updateGPS(GPS_copy);
+            printState();
+            GPS_message_counter=0; 
+            GPS_copy[0] = '\0';
+        }  
     }
     
     led3 = !led3;
