@@ -2,10 +2,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#define MAX_IMU_SIZE 28
-#define MAX_GPS_GPGGA_SIZE 72
-#define MAX_GPS_GPGSV_SIZE 210
-#define MAX_GPS_GPRMC_SIZE 70
+using namespace std;
+
+#define MAX_IMU_SIZE 29
 
 DigitalOut led1(LED1);
 DigitalOut led2(LED2);
@@ -20,9 +19,19 @@ char IMU_message[256];
 int  IMU_message_counter=0;
 char GPS_message[256];
 int  GPS_message_counter=0;
-string IMU_Y="Not ready";
-string IMU_P="Not ready";
-string IMU_R="Not ready";
+
+string IMU_Y="N/A";
+string IMU_P="N/A";
+string IMU_R="N/A";
+string GPS_quality="N/A";
+string GPS_UTC="N/A";
+string GPS_Latitude="N/A";
+string GPS_Longtitude="N/A";
+string GPS_Altitude="N/A";
+string GPS_Num_Satellite="N/A";
+string GPS_HDOP="N/A";
+
+
 
 vector<string> split(const string &s, char delim) {
     stringstream ss(s);
@@ -47,33 +56,32 @@ void updateIMU(string IMU_data) {
 
 void updateGPS(string GPS_data) {
     string GPS_data_string(GPS_data);
-    if (GPS_data_string.substr(0,6) == "$GPGGA" and GPS_data_string.size() <= MAX_GPS_GPGGA_SIZE) {
-        GPS_data_string = IMU_data_string.substr(5);
+    if (GPS_data_string.substr(0,6) == "$GPGGA") {
+        GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
-        IMU_Y = result.at(0);
-        IMU_P = result.at(1);
-        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
-    } else if (GPS_data_string.substr(0,6) == "%GPGSV" and GPS_data_string.size() <= MAX_GPS_GPGSV_SIZE) {
-        GPS_data_string = IMU_data_string.substr(5);
-        vector<string> result = split(GPS_data_string, ',');
-        IMU_Y = result.at(0);
-        IMU_P = result.at(1);
-        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
-    } else if (GPS_data_string.substr(0,6) == "%GPRMC" and GPS_data_string.size() <= MAX_GPS_GPRMC_SIZE) {
-        GPS_data_string = IMU_data_string.substr(5);
-        vector<string> result = split(GPS_data_string, ',');
-        IMU_Y = result.at(0);
-        IMU_P = result.at(1);
-        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
+        GPS_quality = result.at(5);
+        if(GPS_quality == "1") {
+            GPS_UTC = result.at(0);
+            GPS_Latitude = result.at(2) + result.at(1);
+            GPS_Longtitude = result.at(4) + result.at(3);
+            GPS_Num_Satellite = result.at(6);
+            GPS_HDOP = result.at(7);
+            GPS_Altitude = result.at(8) + result.at(9);
+            //pc.printf("%s, %s, %s, %s, %s, %s, %s\n", GPS_quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(), GPS_HDOP.c_str());
+        }
     }
 }
 
-void printState() {
-    pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y,IMU_P,IMU_R);
+void printStateIMU() {
+     pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y.c_str(), IMU_P.c_str(), IMU_R.c_str());                  
+ }
+ 
+ void printStateGPS() {
+    pc.printf("%s, %s, %s, %s, %s, %s, %s\n", GPS_quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(), GPS_HDOP.c_str());      
  }
  
  
- //#YPR=-183.-174,-134.27,-114.39
+//#YPR=-183.74,-134.27,-114.39
 void IMU_serial_ISR() {
     char buf;
     
@@ -86,9 +94,9 @@ void IMU_serial_ISR() {
         
         if (buf=='\n'){
             string IMU_copy(IMU_message, IMU_message_counter);
-            //pc.printf("%s\n", IMU_copy);
+            //pc.printf("%s", IMU_copy.c_str());
             updateIMU(IMU_copy);
-            printState();
+            printStateIMU();
             IMU_message_counter=0; 
             IMU_copy[0] = '\0';
         }
@@ -111,9 +119,9 @@ void GPS_serial_ISR() {
         
         if (buf=='\n'){
             string GPS_copy(GPS_message, GPS_message_counter);
-            //pc.printf("%s\n", IMU_copy);
+            //pc.printf("%s", GPS_copy.c_str());
             updateGPS(GPS_copy);
-            printState();
+            printStateGPS();
             GPS_message_counter=0; 
             GPS_copy[0] = '\0';
         }  
