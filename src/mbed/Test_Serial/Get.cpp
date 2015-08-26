@@ -2,66 +2,62 @@
 
 
 string getIMU_Y() {
-    return;
+    return IMU_Y;
 }
 
 string getIMU_P() {
-    return;
+    return IMU_P;
 }
 
 string getIMU_R() {
-    return;
+    return IMU_R;
 }
 
 string getGPS_Quality() {
-    return;
+    return GPS_Quality;
 }
 
 string getGPS_UTC() {
-    return;
-}
-
-string getGPS_quality() {
-    return;
+    return GPS_UTC;
 }
 
 string getGPS_Latitude() {
-    return;
+    return GPS_Latitude;
 }
 
 string getGPS_Longtitude() {
-    return;
+    return GPS_Longtitude;
 }
 
 string getGPS_Altitude() {
-    return;
+    return GPS_Altitude;
 }
 
 string getGPS_Num_Satellite() {
-    return;
+    return GPS_Num_Satellite;
 }
 
 string getGPS_HDOP() {
-    return;
+    return GPS_HDOP;
 }
 
 string getGPS_VDOP() {
-    return;
+    return GPS_VDOP;
 }
 
 string getGPS_PDOP() {
-    return;
+    return GPS_PDOP;
 }
 
 string getGPS_Date() {
-    return;
+    return GPS_Date;
 }
 
 string getGPS_VelocityKnot() {
-    return;
+    return GPS_VelocityKnot;
 }
 
 string getGPS_VelocityKph() {
-    return;
+    return GPS_VelocityKph;
 }
 
