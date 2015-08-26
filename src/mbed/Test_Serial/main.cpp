@@ -98,15 +98,23 @@ void updateGPS(string GPS_data) {
     }
         
 }
-
-//@GET=GPS_Quality
+/*  Get data from SailBoat
+    @GET=parameter
+    Ex: @GET=GPS_Quality
+    Supported parameter: GPS_Quality, GPS_UTC, GPS_Latitude, GPS_Longtitude, GPS_Altitude,
+    GPS_Num_Satellite, GPS_HDOP, GPS_VDOP, GPS_PDOP, GPS_Date, GPS_VelocityKnot, GPS_VelocityKph
+    Set path to SailBoat
+    @SET=Latitude, Longtitude, Task index
+    @SET=33.776318, -84.407590, 3
+*/
 void decodePC(string PC_data) {
     string PC_data_string(PC_data);
     if (PC_data_string.substr(0,4) == "@GET") {
         pc.printf("%s", PC_data_string.c_str());
         PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
         pc.printf("%s\n", decodeCommand(PC_data_string).c_str());
-        }
+    } else if (PC_data_string.substr(0,4) == "@SET") {
+    }
 }
 
 
