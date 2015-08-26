@@ -30,8 +30,12 @@ string GPS_Longtitude="N/A";
 string GPS_Altitude="N/A";
 string GPS_Num_Satellite="N/A";
 string GPS_HDOP="N/A";
-
-
+string GPS_VDOP="N/A";
+string GPS_PDOP="N/A";
+string GPS_date="N/A";
+string GPS_velocityKnot="N/A";
+string GPS_velocityKph="N/A";
+int asterisk_idx;
 
 vector<string> split(const string &s, char delim) {
     stringstream ss(s);
@@ -60,27 +64,44 @@ void updateGPS(string GPS_data) {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
         GPS_quality = result.at(5);
-        if(GPS_quality == "1") {
+        if(GPS_quality != "0" and GPS_quality != "6") {
             GPS_UTC = result.at(0);
             GPS_Latitude = result.at(2) + result.at(1);
             GPS_Longtitude = result.at(4) + result.at(3);
             GPS_Num_Satellite = result.at(6);
             GPS_HDOP = result.at(7);
             GPS_Altitude = result.at(8) + result.at(9);
-            //pc.printf("%s, %s, %s, %s, %s, %s, %s\n", GPS_quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(), GPS_HDOP.c_str());
         }
+    } else if (GPS_data_string.substr(0,6) == "$GPGSA" and GPS_quality != "0" and GPS_quality != "6") {
+        GPS_data_string = GPS_data_string.substr(7);
+        vector<string> result = split(GPS_data_string, ',');
+        GPS_PDOP = result.at(14);
+        asterisk_idx = result.at(16).find('*');
+        GPS_VDOP = result.at(16).substr(0, asterisk_idx);
+    } else if (GPS_data_string.substr(0,6) == "$GPRMC" and GPS_quality != "0" and GPS_quality != "6") {
+        GPS_data_string = GPS_data_string.substr(7);
+        vector<string> result = split(GPS_data_string, ',');
+        GPS_date = result.at(8);
+    } else if (GPS_data_string.substr(0,6) == "$GPVTG" and GPS_quality != "0" and GPS_quality != "6") {
+        GPS_data_string = GPS_data_string.substr(7);
+        vector<string> result = split(GPS_data_string, ',');
+        GPS_velocityKnot = result.at(4) + result.at(5);
+        asterisk_idx = result.at(7).find('*');
+        GPS_velocityKph = result.at(6) + result.at(7).substr(0, asterisk_idx);
     }
+        
 }
 
 void printStateIMU() {
      pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y.c_str(), IMU_P.c_str(), IMU_R.c_str());                  
  }
  
- void printStateGPS() {
-    pc.printf("%s, %s, %s, %s, %s, %s, %s\n", GPS_quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(), GPS_HDOP.c_str());      
- }
- 
- 
+void printStateGPS() {
+   pc.printf("GPS_quality: %s, GPS_UTC: %s, GPS_Latitude: %s, GPS_Longtitude: %s, GPS_Altitude: %s, "
+            "GPS_Num_Satellite: %s, GPS_HDOP: %s, GPS_VDOP: %s, GPS_PDOP: %s, GPS_date: %s, GPS_velocityKnot: %s, GPS_velocityKph: %s\n",
+            GPS_quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(),
+            GPS_HDOP.c_str(), GPS_VDOP.c_str(), GPS_PDOP.c_str(), GPS_date.c_str(), GPS_velocityKnot.c_str(), GPS_velocityKph.c_str());    
+}
 //#YPR=-183.74,-134.27,-114.39
 void IMU_serial_ISR() {
     char buf;
@@ -96,7 +117,6 @@ void IMU_serial_ISR() {
             string IMU_copy(IMU_message, IMU_message_counter);
             //pc.printf("%s", IMU_copy.c_str());
             updateIMU(IMU_copy);
-            printStateIMU();
             IMU_message_counter=0; 
             IMU_copy[0] = '\0';
         }
@@ -121,7 +141,6 @@ void GPS_serial_ISR() {
             string GPS_copy(GPS_message, GPS_message_counter);
             //pc.printf("%s", GPS_copy.c_str());
             updateGPS(GPS_copy);
-            printStateGPS();
             GPS_message_counter=0; 
             GPS_copy[0] = '\0';
         }  
@@ -150,8 +169,9 @@ int main() {
     pc.attach(&PC_serial_ISR);
     
     while (1) {
-        
         led1 = !led1;
         wait(0.2);
+        printStateIMU();
+        printStateGPS();
     }
 }
