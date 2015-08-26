@@ -46,6 +46,9 @@ vector<string> split(const string &s, char delim) {
     string item;
     vector<string> tokens;
     while (getline(ss, item, delim)) {
+        if (item.empty()) {
+            item == "N/A";
+        }
         tokens.push_back(item);
     }
     return tokens;
@@ -58,7 +61,7 @@ void updateIMU(string IMU_data) {
         vector<string> result = split(IMU_data_string, ',');
         IMU_Y = result.at(0);
         IMU_P = result.at(1);
-        IMU_R = result.at(2).substr(0, result.at(2).size()-1);;
+        IMU_R = result.at(2).substr(0, result.at(2).size()-1);
         }
 }
 
@@ -95,6 +98,17 @@ void updateGPS(string GPS_data) {
     }
         
 }
+
+//@GET=GPS_Quality
+void decodePC(string PC_data) {
+    string PC_data_string(PC_data);
+    if (PC_data_string.substr(0,4) == "@GET") {
+        pc.printf("%s", PC_data_string.c_str());
+        PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
+        pc.printf("%s\n", decodeCommand(PC_data_string).c_str());
+        }
+}
+
 
 void printStateIMU() {
      pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y.c_str(), IMU_P.c_str(), IMU_R.c_str());                  
@@ -186,8 +200,8 @@ int main() {
     
     while (1) {
         led1 = !led1;
-        wait(0.2);
-        printStateIMU();
-        printStateGPS();
+        wait(0.4);
+        //printStateIMU();
+        //printStateGPS();
     }
 }

@@ -33,3 +33,4 @@ string getGPS_PDOP();
 string getGPS_Date();
 string getGPS_VelocityKnot();
 string getGPS_VelocityKph();
+string decodeCommand(string cmd);
