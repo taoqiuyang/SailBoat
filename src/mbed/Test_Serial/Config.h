@@ -1,5 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
+#include <vector>
+#include <list>
+#include <sstream>
+#include "mbed.h"
 using namespace std;
+
+#define MAX_IMU_SIZE 29
+#define MAX_TASK_SIZE 5
 
 extern string IMU_Y;
 extern string IMU_P;
@@ -16,6 +25,9 @@ extern string GPS_PDOP;
 extern string GPS_Date;
 extern string GPS_VelocityKnot;
 extern string GPS_VelocityKph;
+extern double Longtitude_Path[MAX_TASK_SIZE];
+extern double Latitude_Path[MAX_TASK_SIZE];
+extern Serial pc;
 
 string getIMU_Y();
 string getIMU_P();
@@ -33,4 +45,6 @@ string getGPS_PDOP();
 string getGPS_Date();
 string getGPS_VelocityKnot();
 string getGPS_VelocityKph();
-string decodeCommand(string cmd);
+string decodeCommandGET(string cmd);
+string decodeCommandSET(string cmd);
+vector<string> split(const string &s, char delim);

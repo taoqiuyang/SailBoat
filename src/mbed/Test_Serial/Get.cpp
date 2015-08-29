@@ -1,4 +1,4 @@
-#include "Get.h"
+#include "Config.h"
 
 
 string getIMU_Y() {
@@ -61,7 +61,7 @@ string getGPS_VelocityKph() {
     return GPS_VelocityKph;
 }
     
-string decodeCommand(string cmd) {
+string decodeCommandGET(string cmd) {
     if (cmd == "IMU_Y") {
         return(getIMU_Y());
     } else if (cmd == "IMU_P") {
@@ -93,6 +93,6 @@ string decodeCommand(string cmd) {
     } else if (cmd == "GPS_VelocityKph") {
         return(getGPS_VelocityKph());
     } else {
-        return("Not acceptable command, example: @GET=GPS_Quality");
+        return("Not valid command, example: @GET=GPS_Quality");
     }
 }

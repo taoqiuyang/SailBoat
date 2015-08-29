@@ -1,11 +1,4 @@
-#include "mbed.h"
-#include <string>
-#include <sstream>
-#include <vector>
-#include "Get.h"
-using namespace std;
-
-#define MAX_IMU_SIZE 29
+#include "Config.h"
 
 DigitalOut led1(LED1);
 DigitalOut led2(LED2);
@@ -41,13 +34,16 @@ string GPS_VelocityKph="N/A";
 
 int asterisk_idx;
 
+double Longtitude_Path[MAX_TASK_SIZE];
+double Latitude_Path[MAX_TASK_SIZE];
+
 vector<string> split(const string &s, char delim) {
     stringstream ss(s);
     string item;
     vector<string> tokens;
     while (getline(ss, item, delim)) {
         if (item.empty()) {
-            item == "N/A";
+            item = "N/A";
         }
         tokens.push_back(item);
     }
@@ -104,16 +100,26 @@ void updateGPS(string GPS_data) {
     Supported parameter: GPS_Quality, GPS_UTC, GPS_Latitude, GPS_Longtitude, GPS_Altitude,
     GPS_Num_Satellite, GPS_HDOP, GPS_VDOP, GPS_PDOP, GPS_Date, GPS_VelocityKnot, GPS_VelocityKph
     Set path to SailBoat
-    @SET=Latitude, Longtitude, Task index
-    @SET=33.776318, -84.407590, 3
+    @SET=PATH, Latitude, Longtitude, Task id
+    @SET=PATH, 33.776318, -84.407590, 3 
 */
 void decodePC(string PC_data) {
     string PC_data_string(PC_data);
     if (PC_data_string.substr(0,4) == "@GET") {
         pc.printf("%s", PC_data_string.c_str());
         PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
-        pc.printf("%s\n", decodeCommand(PC_data_string).c_str());
+        pc.printf("%s\n", decodeCommandGET(PC_data_string).c_str());
     } else if (PC_data_string.substr(0,4) == "@SET") {
+        pc.printf("%s", PC_data_string.c_str());
+        PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
+        string claim = decodeCommandSET(PC_data_string);
+        if (claim == "DONE") {
+            pc.printf("Current Path: Longtitude, Latitude\n");
+            for (int i=0;i<MAX_TASK_SIZE;++i) {
+                pc.printf("              %f, %f\n", Longtitude_Path[i], Latitude_Path[i]);
+            }
+        }
+        pc.printf("%s\n", claim.c_str());
     }
 }
 
@@ -205,6 +211,7 @@ int main() {
     GPS.attach(&GPS_serial_ISR);
     pc.baud(115200);
     pc.attach(&PC_serial_ISR);
+    
     
     while (1) {
         led1 = !led1;
