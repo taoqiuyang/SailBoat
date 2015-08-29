@@ -5,6 +5,9 @@
 #include <list>
 #include <sstream>
 #include "mbed.h"
+#include "Servo.h"
+#include "SDFileSystem.h"
+
 using namespace std;
 
 #define MAX_IMU_SIZE 29

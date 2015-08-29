@@ -8,6 +8,9 @@ DigitalOut led4(LED4);
 Serial pc(USBTX, USBRX);
 Serial IMU(p28, p27);  // tx, rx
 Serial GPS(p13, p14);  // tx, rx
+Servo rudderServo(p25);
+Servo wingServo(p26);
+SDFileSystem sd(p5, p6, p7, p8, "sd");// mosi, miso, sck, cs
 
 char IMU_message[256];
 int  IMU_message_counter=0;
@@ -203,7 +206,48 @@ void PC_serial_ISR() {
     
     led4= !led4;
 }
- 
+
+void set_servo_position(Servo targetServo, float angleDeg, float minDeg, float minNorVal, float maxDeg, float maxNorVal){
+    /*angleDeg:  desired angle
+      minDeg:    minimum angle in degrees
+      minNorVal: normalized value[0,1] when servo is at its minimum angle
+      maxDeg:    maximum angle in degrees
+      maxNorVal: normalized value[0,1] when servo is at its maximum angle
+    */
+    
+    float pos; //normalized angle, [0,1]
+    float scale; //scale factor for servo calibration
+    
+    //extreme conditions
+    if (angleDeg<minDeg){
+        pos=minNorVal;
+    }   
+    if (angleDeg>maxDeg){
+        pos=maxNorVal;
+    }
+    
+    //Calculate scale factor for servo calibration
+    scale = (angleDeg-minDeg)/(maxDeg-minDeg);
+    //Calculate servo normalized value
+    pos = minNorVal + scale*(maxNorVal-minNorVal);
+    
+    //send signal to servo
+    targetServo=pos;
+}
+
+int log_data_SD(){   
+    FILE *fp = fopen("/sd/dataLog/dataLog.txt", "w");
+    if(fp == NULL) {
+        return 0;
+    }else{
+        //Write all the useful data to the SD card        
+        fprintf(fp, "Nya Pass~");
+        fclose(fp); 
+        return 1;
+    }
+}
+
+
 int main() {
     IMU.baud(57600);
     IMU.attach(&IMU_serial_ISR);
@@ -212,11 +256,15 @@ int main() {
     pc.baud(115200);
     pc.attach(&PC_serial_ISR);
     
-    
+float angle=20;    
     while (1) {
-        led1 = !led1;
+        if (angle>160){angle=20;}               
+        set_servo_position(rudderServo, angle, 0, 0, 180, 1);
+        set_servo_position(wingServo, angle, 0, 0, 180, 1);        
+        angle=angle+10;
         wait(0.4);
         //printStateIMU();
         //printStateGPS();
+        led1 = !led1;
     }
 }
