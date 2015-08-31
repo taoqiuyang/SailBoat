@@ -1,5 +1,4 @@
 #include "Config.h"
-     /* strtod */
 
 
 string head;

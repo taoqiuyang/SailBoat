@@ -27,13 +27,38 @@ string GPS_UTC="N/A";
 string GPS_Latitude="N/A";
 string GPS_Longtitude="N/A";
 string GPS_Altitude="N/A";
+string GPS_Altitude_Unit="N/A";
 string GPS_Num_Satellite="N/A";
 string GPS_HDOP="N/A";
 string GPS_VDOP="N/A";
 string GPS_PDOP="N/A";
 string GPS_Date="N/A";
 string GPS_VelocityKnot="N/A";
+string GPS_VelocityKnot_Unit="N/A";
 string GPS_VelocityKph="N/A";
+string GPS_VelocityKph_Unit="N/A";
+
+
+double D_IMU_Y=0;
+double D_IMU_P=0;
+double D_IMU_R=0;
+double D_GPS_Quality=0;
+double D_GPS_UTC=0;
+double D_GPS_Latitude=0;
+double D_GPS_Latitude_Direction=0;
+double D_GPS_Longtitude=0;
+double D_GPS_Longtitude_Direction=0;
+double D_GPS_Altitude=0;
+double D_GPS_Altitude_Unit=0;
+double D_GPS_Num_Satellite=0;
+double D_GPS_HDOP=0;
+double D_GPS_VDOP=0;
+double D_GPS_PDOP=0;
+double D_GPS_Date=0;
+double D_GPS_VelocityKnot=0;
+double D_GPS_VelocityKnot_Unit=0;
+double D_GPS_VelocityKph=0;
+double D_GPS_VelocityKph_Unit=0;
 
 int asterisk_idx;
 
@@ -59,8 +84,11 @@ void updateIMU(string IMU_data) {
         IMU_data_string = IMU_data_string.substr(5);
         vector<string> result = split(IMU_data_string, ',');
         IMU_Y = result.at(0);
+        D_IMU_Y = strtod(result.at(0).c_str(), NULL);
         IMU_P = result.at(1);
+        D_IMU_P = strtod(result.at(1).c_str(), NULL);       
         IMU_R = result.at(2).substr(0, result.at(2).size()-1);
+        D_IMU_R = strtod(result.at(2).substr(0, result.at(2).size()-1).c_str(), NULL);  
         }
 }
 
@@ -70,30 +98,55 @@ void updateGPS(string GPS_data) {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
         GPS_Quality = result.at(5);
+        D_GPS_Quality = strtod(result.at(5).c_str(), NULL);
         if(GPS_Quality != "0" and GPS_Quality != "6") {
             GPS_UTC = result.at(0);
+            D_GPS_UTC = strtod(result.at(0).c_str(), NULL);
             GPS_Latitude = result.at(2) + result.at(1);
+            D_GPS_Latitude = strtod(result.at(1).c_str(), NULL);
+            if (result.at(2) == "N") {
+              D_GPS_Latitude_Direction = 0;
+            } else if (result.at(2) == "S") {
+              D_GPS_Latitude_Direction = 1;  
+            }
             GPS_Longtitude = result.at(4) + result.at(3);
+            D_GPS_Longtitude = strtod(result.at(3).c_str(), NULL);
+            if (result.at(4) == "W") {
+              D_GPS_Latitude_Direction = 0;
+            } else if (result.at(4) == "E") {
+              D_GPS_Latitude_Direction = 1;  
+            }
             GPS_Num_Satellite = result.at(6);
+            D_GPS_Num_Satellite = strtod(result.at(6).c_str(), NULL);
             GPS_HDOP = result.at(7);
+            D_GPS_HDOP = strtod(result.at(7).c_str(), NULL);
             GPS_Altitude = result.at(8) + result.at(9);
+            D_GPS_Altitude = strtod(result.at(8).c_str(), NULL);
+            GPS_Altitude_Unit = result.at(9);
         }
     } else if (GPS_data_string.substr(0,6) == "$GPGSA" and GPS_Quality != "0" and GPS_Quality != "6") {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
         GPS_PDOP = result.at(14);
+        D_GPS_PDOP = strtod(result.at(14).c_str(), NULL);
         asterisk_idx = result.at(16).find('*');
         GPS_VDOP = result.at(16).substr(0, asterisk_idx);
+        D_GPS_VDOP = strtod(result.at(16).substr(0, asterisk_idx).c_str(), NULL);
     } else if (GPS_data_string.substr(0,6) == "$GPRMC" and GPS_Quality != "0" and GPS_Quality != "6") {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
         GPS_Date = result.at(8);
+        D_GPS_Date = strtod(result.at(8).c_str(), NULL);
     } else if (GPS_data_string.substr(0,6) == "$GPVTG" and GPS_Quality != "0" and GPS_Quality != "6") {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
         GPS_VelocityKnot = result.at(4) + result.at(5);
+        D_GPS_VelocityKnot = strtod(result.at(4).c_str(), NULL);
+        GPS_VelocityKnot_Unit = result.at(5);
         asterisk_idx = result.at(7).find('*');
         GPS_VelocityKph = result.at(6) + result.at(7).substr(0, asterisk_idx);
+        D_GPS_VelocityKph = strtod(result.at(6).c_str(), NULL);
+        GPS_VelocityKph_Unit = result.at(7).substr(0, asterisk_idx);
     }
         
 }
