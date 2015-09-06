@@ -37,7 +37,7 @@ string GPS_VelocityKnot="N/A";
 string GPS_VelocityKnot_Unit="N/A";
 string GPS_VelocityKph="N/A";
 string GPS_VelocityKph_Unit="N/A";
-
+string temp = "";
 
 double D_IMU_Y=0;
 double D_IMU_P=0;
@@ -49,16 +49,13 @@ double D_GPS_Latitude_Direction=0;
 double D_GPS_Longtitude=0;
 double D_GPS_Longtitude_Direction=0;
 double D_GPS_Altitude=0;
-double D_GPS_Altitude_Unit=0;
 double D_GPS_Num_Satellite=0;
 double D_GPS_HDOP=0;
 double D_GPS_VDOP=0;
 double D_GPS_PDOP=0;
 double D_GPS_Date=0;
 double D_GPS_VelocityKnot=0;
-double D_GPS_VelocityKnot_Unit=0;
 double D_GPS_VelocityKph=0;
-double D_GPS_VelocityKph_Unit=0;
 
 int asterisk_idx;
 
@@ -84,11 +81,11 @@ void updateIMU(string IMU_data) {
         IMU_data_string = IMU_data_string.substr(5);
         vector<string> result = split(IMU_data_string, ',');
         IMU_Y = result.at(0);
-        D_IMU_Y = strtod(result.at(0).c_str(), NULL);
+        D_IMU_Y = strtod(IMU_Y.c_str(), NULL);
         IMU_P = result.at(1);
-        D_IMU_P = strtod(result.at(1).c_str(), NULL);       
+        D_IMU_P = strtod(IMU_P.c_str(), NULL);       
         IMU_R = result.at(2).substr(0, result.at(2).size()-1);
-        D_IMU_R = strtod(result.at(2).substr(0, result.at(2).size()-1).c_str(), NULL);  
+        D_IMU_R = strtod(IMU_R.c_str(), NULL);  
         }
 }
 
@@ -101,20 +98,28 @@ void updateGPS(string GPS_data) {
         D_GPS_Quality = strtod(result.at(5).c_str(), NULL);
         if(GPS_Quality != "0" and GPS_Quality != "6") {
             GPS_UTC = result.at(0);
-            D_GPS_UTC = strtod(result.at(0).c_str(), NULL);
-            GPS_Latitude = result.at(2) + result.at(1);
-            D_GPS_Latitude = strtod(result.at(1).c_str(), NULL);
-            if (result.at(2) == "N") {
+            D_GPS_UTC = strtod(GPS_UTC.c_str(), NULL);
+            GPS_Latitude = result.at(1) + result.at(2);
+            temp = result.at(1);
+            if (temp[0] == '0') {
+                temp[0] = '-';
+                }
+            D_GPS_Latitude = strtod(temp.c_str(), NULL);
+            if (result.at(2) == "N") { // 0 means North
               D_GPS_Latitude_Direction = 0;
-            } else if (result.at(2) == "S") {
+            } else if (result.at(2) == "S") { // 1 means South
               D_GPS_Latitude_Direction = 1;  
             }
-            GPS_Longtitude = result.at(4) + result.at(3);
-            D_GPS_Longtitude = strtod(result.at(3).c_str(), NULL);
-            if (result.at(4) == "W") {
-              D_GPS_Latitude_Direction = 0;
-            } else if (result.at(4) == "E") {
-              D_GPS_Latitude_Direction = 1;  
+            GPS_Longtitude = result.at(3) + result.at(4);
+            temp = result.at(3);
+            if (temp[0] == '0') {
+                temp[0] = '-';
+                }
+            D_GPS_Longtitude = strtod(temp.c_str(), NULL);
+            if (result.at(4) == "E") { // 0 means East
+              D_GPS_Longtitude_Direction = 0;
+            } else if (result.at(4) == "W") { // 1 means West
+              D_GPS_Longtitude_Direction = 1;  
             }
             GPS_Num_Satellite = result.at(6);
             D_GPS_Num_Satellite = strtod(result.at(6).c_str(), NULL);
@@ -181,14 +186,23 @@ void decodePC(string PC_data) {
 
 
 void printStateIMU() {
-     pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y.c_str(), IMU_P.c_str(), IMU_R.c_str());                  
+     //pc.printf("IMU_Y: %s, IMU_P: %s, IMU_R: %s\n",IMU_Y.c_str(), IMU_P.c_str(), IMU_R.c_str());
+     pc.printf("D_IMU_Y: %f, D_IMU_P: %f, D_IMU_R: %f\n",D_IMU_Y, D_IMU_P, D_IMU_R);                  
  }
  
 void printStateGPS() {
+   /*
    pc.printf("GPS_Quality: %s, GPS_UTC: %s, GPS_Latitude: %s, GPS_Longtitude: %s, GPS_Altitude: %s, "
             "GPS_Num_Satellite: %s, GPS_HDOP: %s, GPS_VDOP: %s, GPS_PDOP: %s, GPS_Date: %s, GPS_VelocityKnot: %s, GPS_VelocityKph: %s\n",
             GPS_Quality.c_str(), GPS_UTC.c_str(), GPS_Latitude.c_str(), GPS_Longtitude.c_str(), GPS_Altitude.c_str(), GPS_Num_Satellite.c_str(),
-            GPS_HDOP.c_str(), GPS_VDOP.c_str(), GPS_PDOP.c_str(), GPS_Date.c_str(), GPS_VelocityKnot.c_str(), GPS_VelocityKph.c_str());    
+            GPS_HDOP.c_str(), GPS_VDOP.c_str(), GPS_PDOP.c_str(), GPS_Date.c_str(), GPS_VelocityKnot.c_str(), GPS_VelocityKph.c_str());
+   */  
+    
+    pc.printf("D_GPS_Quality: %f, D_GPS_UTC: %f, D_GPS_Latitude: %f, D_GPS_Latitude_Direction: %f, D_GPS_Longtitude: %f, D_GPS_Longtitude_Direction: %f, D_GPS_Altitude: %f,\n"
+            "D_GPS_Num_Satellite: %f, D_GPS_HDOP: %f, D_GPS_VDOP: %f, D_GPS_PDOP: %f, D_GPS_Date: %f, D_GPS_VelocityKnot: %f, D_GPS_VelocityKph: %f\n",
+            D_GPS_Quality, D_GPS_UTC, D_GPS_Latitude, D_GPS_Latitude_Direction, D_GPS_Longtitude, D_GPS_Longtitude_Direction, D_GPS_Altitude, D_GPS_Num_Satellite,
+            D_GPS_HDOP, D_GPS_VDOP, D_GPS_PDOP, D_GPS_Date, D_GPS_VelocityKnot, D_GPS_VelocityKph);      
+          
 }
 
 //#YPR=-183.74,-134.27,-114.39
@@ -309,15 +323,15 @@ int main() {
     pc.baud(115200);
     pc.attach(&PC_serial_ISR);
     
-float angle=20;    
+    //float angle=20;    
     while (1) {
-        if (angle>160){angle=20;}               
-        set_servo_position(rudderServo, angle, 0, 0, 180, 1);
-        set_servo_position(wingServo, angle, 0, 0, 180, 1);        
-        angle=angle+10;
+    //    if (angle>160){angle=20;}               
+    //    set_servo_position(rudderServo, angle, 0, 0, 180, 1);
+    //    set_servo_position(wingServo, angle, 0, 0, 180, 1);        
+    //    angle=angle+10;
         wait(0.4);
-        //printStateIMU();
-        //printStateGPS();
+        printStateIMU();
+        printStateGPS();
         led1 = !led1;
     }
 }

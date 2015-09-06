@@ -28,6 +28,23 @@ extern string GPS_PDOP;
 extern string GPS_Date;
 extern string GPS_VelocityKnot;
 extern string GPS_VelocityKph;
+
+extern double D_IMU_Y;
+extern double D_IMU_P;
+extern double D_IMU_R;
+extern double D_GPS_Quality;
+extern double D_GPS_UTC;
+extern double D_GPS_Latitude;
+extern double D_GPS_Longtitude;
+extern double D_GPS_Altitude;
+extern double D_GPS_Num_Satellite;
+extern double D_GPS_HDOP;
+extern double D_GPS_VDOP;
+extern double D_GPS_PDOP;
+extern double D_GPS_Date;
+extern double D_GPS_VelocityKnot;
+extern double D_GPS_VelocityKph;
+
 extern double Longtitude_Path[MAX_TASK_SIZE];
 extern double Latitude_Path[MAX_TASK_SIZE];
 extern Serial pc;
