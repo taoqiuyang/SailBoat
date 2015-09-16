@@ -14,6 +14,7 @@ using namespace std;
 #define MAX_IMU_SIZE 29
 #define MAX_TASK_SIZE 5
 #define DEG2RAD_RATIO 0.0174532925199433
+#define RAD2DEG_RATIO 57.295779513082321
 #define EARTH_RADIUS 6371000
 
 extern string IMU_Y;
@@ -52,6 +53,8 @@ extern double Longitude_Path[MAX_TASK_SIZE];
 extern double Latitude_Path[MAX_TASK_SIZE];
 extern Serial pc;
 
+extern double Initial_Bearing;
+extern double Final_Bearing;
 
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);

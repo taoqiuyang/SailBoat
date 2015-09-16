@@ -89,10 +89,6 @@ double GPSdecimal(double coordinate) {
      return ((int) coordinate) + ((coordinate-((int) coordinate))/60);    
 }
 
-double Deg2Rad(double degree) {
-    return degree*DEG2RAD_RATIO;
-}
-
 void updateIMU(string IMU_data) {
     string IMU_data_string(IMU_data);
     if (IMU_data_string.substr(0,4) == "#YPR" and IMU_data_string.size() <= MAX_IMU_SIZE) {

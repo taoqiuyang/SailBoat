@@ -1,5 +1,7 @@
 #include "Config.h"
 
+double Initial_Bearing;
+double Final_Bearing;
 
 string decodeCommandGET(string cmd) {
     if (cmd == "IMU_Y") {
@@ -37,10 +39,30 @@ string decodeCommandGET(string cmd) {
     }
 }
 
+
+
+double Deg2Rad(double degree) {
+    return degree*DEG2RAD_RATIO;
+}
+
+double Rad2Degree(double radian) {
+    return radian*RAD2DEG_RATIO;
+}
+
 double getDistance(int task_id) {
     double cur_Latitude = Deg2Rad(D_GPS_Latitude);
     double cur_Logntitude = D_GPS_Longitude;
     double dest_Latitude = Deg2Rad(Latitude_Path[task_id-1]);
     double dest_Longitude = Longitude_Path[task_id-1];   
     return acos(sin(cur_Latitude)*sin(dest_Latitude)+cos(cur_Latitude)*cos(dest_Latitude)*cos(Deg2Rad(dest_Longitude-cur_Logntitude)))*EARTH_RADIUS;
+}
+
+void updateBearing(int task_id) {
+    double cur_Latitude = Deg2Rad(D_GPS_Latitude);
+    double cur_Logntitude = D_GPS_Longitude;
+    double dest_Latitude = Deg2Rad(Latitude_Path[task_id-1]);
+    double dest_Longitude = Longitude_Path[task_id-1];  
+    Initial_Bearing = Rad2Degree(atan2(cos(cur_Latitude)*sin(dest_Latitude)-sin(cur_Latitude)*cos(dest_Latitude)*cos(Deg2Rad(dest_Longitude-cur_Logntitude)),
+                      sin(Deg2Rad(dest_Longitude-cur_Logntitude))*cos(dest_Latitude)));
+    Final_Bearing = ((int)(Initial_Bearing+180))%360;
 }
