@@ -89,6 +89,11 @@ double GPSdecimal(double coordinate) {
      return ((int) coordinate) + ((coordinate-((int) coordinate))/60);    
 }
 
+void initialize_Path() {
+    fill(Longitude_Path, Longitude_Path+MAX_TASK_SIZE, 181);
+    fill(Latitude_Path, Latitude_Path+MAX_TASK_SIZE, 181);
+}
+
 void updateIMU(string IMU_data) {
     string IMU_data_string(IMU_data);
     if (IMU_data_string.substr(0,4) == "#YPR" and IMU_data_string.size() <= MAX_IMU_SIZE) {
@@ -370,7 +375,7 @@ int main() {
     ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
    
     initialize_controller();
-    
+    initialize_Path();
     //float angle=20;    
     while (1) {
     //    if (angle>160){angle=20;}               

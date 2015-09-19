@@ -34,6 +34,7 @@ extern string GPS_VelocityKnot;
 extern string GPS_VelocityKph;
 
 extern double D_IMU_Y;
+extern double D_IMU_Y_north;
 extern double D_IMU_P;
 extern double D_IMU_R;
 extern double D_GPS_Quality;
@@ -60,4 +61,5 @@ string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);
 vector<string> split(const string &s, char delim);
 double getDistance();
+double getAngle();
 double Deg2Rad(double degree);
