@@ -89,8 +89,9 @@ double GPSdecimal(double coordinate) {
      return ((int) coordinate) + ((coordinate-((int) coordinate))/60);    
 }
 
-double Deg2Rad(double degree) {
-    return degree*DEG2RAD_RATIO;
+void initialize_Path() {
+    fill(Longitude_Path, Longitude_Path+MAX_TASK_SIZE, 181);
+    fill(Latitude_Path, Latitude_Path+MAX_TASK_SIZE, 181);
 }
 
 void updateIMU(string IMU_data) {
@@ -374,7 +375,7 @@ int main() {
     ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
    
     initialize_controller();
-    
+    initialize_Path();
     //float angle=20;    
     while (1) {
     //    if (angle>160){angle=20;}               
