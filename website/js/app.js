@@ -1,4 +1,5 @@
 var waypoint = [];
+var markers = [];
 
 $(document).ready(function() {
 	
@@ -11,9 +12,8 @@ $(document).ready(function() {
 		var cell2 = row.insertCell(1);
 		var cell3 = row.insertCell(2);
 		
-		var num = waypoint.length;
-		
 		// Add some text to the new cells:
+		var num = waypoint.length;
 		cell1.innerHTML = num;
 		cell2.innerHTML = waypoint[num - 1].lat;
 		cell3.innerHTML = waypoint[num - 1].lng;
@@ -43,31 +43,51 @@ $(document).ready(function() {
 		google.maps.event.addListener(map, 'click', function(event){
 			$("#latval").val(event.latLng.lat().toFixed(6));
 			$("#lngval").val(event.latLng.lng().toFixed(6));
-			
-		   // alert('Lat: ' + event.latLng.lat() + ' Lng: ' + event.latLng.lng());
 		});
 		
-		$("#send").click(function(){
-			map.setCenter(new google.maps.LatLng($("#latval").val(), $("#lngval").val()));
+		$("#add").click(function(){
+			var location = new google.maps.LatLng($("#latval").val(), $("#lngval").val());
 			waypoint.push({
 				lat: $("#latval").val(), 
 				lng: $("#lngval").val()
 			});
+			
+			//calculate center
+			var ave_lat = 0;
+			var ave_lng = 0;
+			
+			for (var i = 0; i < waypoint.length; i++){
+				ave_lat = ave_lat + Number(waypoint[i].lat);
+				ave_lng = ave_lng + Number(waypoint[i].lng);
+			}
+			
+			ave_lat = ave_lat / waypoint.length;
+			ave_lng = ave_lng / waypoint.length;
+			
+			map.setCenter(new google.maps.LatLng(ave_lat, ave_lng));
+			
 			updateTable();
+			
+			var marker = new google.maps.Marker({
+				position: location,
+				map: map
+			});
+			
+			markers.push(marker);
 		})
 		
 		$("#delete").click(function(){
 			var num = waypoint.length;
-			waypoint.pop();
 			
 			if(num > 0){
+				waypoint.pop();
+				markers[markers.length - 1].setMap(null);
+				markers.pop();
 				document.getElementById("pointTable").deleteRow(num + 1);
 			}
 		})
-		
 	}
 	
 	initialize();
 	
-	// google.maps.event.addDomListener(window, 'load', initialize);
 });
