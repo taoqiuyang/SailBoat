@@ -1,5 +1,24 @@
-$(document).ready(function() {
+var waypoint = [];
 
+$(document).ready(function() {
+	
+	function updateTable(){
+		var table = document.getElementById("pointTable");
+		var rowNumber = waypoint.length;
+		var row = table.insertRow(rowNumber + 1);
+		
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		
+		var num = waypoint.length;
+		
+		// Add some text to the new cells:
+		cell1.innerHTML = num;
+		cell2.innerHTML = waypoint[num - 1].lat;
+		cell3.innerHTML = waypoint[num - 1].lng;
+	}
+	
 	function initialize() {
 		var mapCanvas = document.getElementById('map');
 		
@@ -30,7 +49,22 @@ $(document).ready(function() {
 		
 		$("#send").click(function(){
 			map.setCenter(new google.maps.LatLng($("#latval").val(), $("#lngval").val()));
+			waypoint.push({
+				lat: $("#latval").val(), 
+				lng: $("#lngval").val()
+			});
+			updateTable();
 		})
+		
+		$("#delete").click(function(){
+			var num = waypoint.length;
+			waypoint.pop();
+			
+			if(num > 0){
+				document.getElementById("pointTable").deleteRow(num + 1);
+			}
+		})
+		
 	}
 	
 	initialize();

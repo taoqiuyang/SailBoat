@@ -8,14 +8,30 @@
 	</head>
 
 	<body>
-		<div id = "input">
-			latitude: <input type = "text" name = "lat" id = "latval">
-			longitude: <input type = "text" name = "lng" id = "lngval">
-			<br/>
-			<button id = "send">Send</button>
+		<div id = "main">
+			<div id = "input">
+				latitude: <input type = "text" name = "lat" id = "latval">
+				longitude: <input type = "text" name = "lng" id = "lngval">
+				<br/>
+				<button id = "send">Send</button>
+				<button id = "delete">Delete</button>
+			</div>
+		
+			<div id="map">
+			</div>
 		</div>
-	
-		<div id="map">
+		
+		<div id = "waypoints">
+			<table id = "pointTable" border="1">
+				<tr>
+					<th colspan="3">Way Points</th>
+				</tr>
+				<tr>
+					<td>No.</td>
+					<td>Latitude</td> 
+					<td>Longitude</td>
+				</tr>
+			</table>
 		</div>
 
 		
