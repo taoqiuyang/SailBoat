@@ -45,13 +45,7 @@ $(document).ready(function() {
 			$("#lngval").val(event.latLng.lng().toFixed(6));
 		});
 		
-		$("#add").click(function(){
-			var location = new google.maps.LatLng($("#latval").val(), $("#lngval").val());
-			waypoint.push({
-				lat: $("#latval").val(), 
-				lng: $("#lngval").val()
-			});
-			
+		function resetCenter(){
 			//calculate center
 			var ave_lat = 0;
 			var ave_lng = 0;
@@ -65,7 +59,16 @@ $(document).ready(function() {
 			ave_lng = ave_lng / waypoint.length;
 			
 			map.setCenter(new google.maps.LatLng(ave_lat, ave_lng));
+		}
+		
+		$("#add").click(function(){
+			var location = new google.maps.LatLng($("#latval").val(), $("#lngval").val());
+			waypoint.push({
+				lat: $("#latval").val(), 
+				lng: $("#lngval").val()
+			});
 			
+			resetCenter();
 			updateTable();
 			
 			var marker = new google.maps.Marker({
@@ -76,14 +79,19 @@ $(document).ready(function() {
 			markers.push(marker);
 		})
 		
+		
 		$("#delete").click(function(){
 			var num = waypoint.length;
+			
 			
 			if(num > 0){
 				waypoint.pop();
 				markers[markers.length - 1].setMap(null);
 				markers.pop();
 				document.getElementById("pointTable").deleteRow(num + 1);
+				if(num > 1){
+					resetCenter();
+				}
 			}
 		})
 	}
