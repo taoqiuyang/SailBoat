@@ -62,6 +62,17 @@ double getDistance(int task_id) {
     }
 }
 
+double getDistance_2dest(int task_id_start, int task_id_end) {
+    double dest_Latitude_start = Deg2Rad(Latitude_Path[task_id_start-1]);
+    double dest_Longitude_start = Longitude_Path[task_id_start-1];
+    double dest_Latitude_end = Deg2Rad(Latitude_Path[task_id_end-1]);
+    double dest_Longitude_end = Longitude_Path[task_id_end-1];
+    if(Latitude_Path[task_id_start-1] == 181 or Longitude_Path[task_id_start-1] == 181 or Latitude_Path[task_id_end-1] == 181 or Longitude_Path[task_id_end-1] == 181) {
+        return -1;
+    } else {
+        return acos(sin(dest_Latitude_start)*sin(dest_Latitude_end)+cos(dest_Latitude_start)*cos(dest_Latitude_end)*cos(Deg2Rad(dest_Longitude_end-dest_Longitude_start)))*EARTH_RADIUS;
+    }
+}
 
 double getAngle(int task_id) {
     double cur_Latitude = Deg2Rad(D_GPS_Latitude);
@@ -78,5 +89,18 @@ double getAngle(int task_id) {
         double out =  (Initial_Bearing - D_IMU_Y_north< -180)?(Initial_Bearing - D_IMU_Y_north + 360):
                       (Initial_Bearing - D_IMU_Y_north>  180)?(Initial_Bearing - D_IMU_Y_north - 360):(Initial_Bearing - D_IMU_Y_north);
         return out;
+    }
+}
+
+double getCTE(int task_id) {
+    double dis_start = getDistance(task_id);
+    double dis_end = getDistance(task_id+1);
+    double dis_between = getDistance_2dest(task_id,task_id+1);
+    if (dis_start == -1 or dis_end == -1 or dis_between == -1) {
+        return -1;
+    } else {
+        double p = (dis_start+dis_end+dis_between)/2;
+        double area = sqrt(p*(p-dis_start)*(p-dis_end)*(p-dis_between));
+        return 2*area/dis_between;
     }
 }

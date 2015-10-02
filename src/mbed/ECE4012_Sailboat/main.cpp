@@ -233,14 +233,16 @@ void printPath() {
     }
 }
 
-void printDistance() {   
-    for(int i=0;i<MAX_TASK_SIZE;++i) {       
+void printDistance() {
+    pc.printf("Current Distance: Task id, Distance\n");
+    for(int i=0;i<MAX_TASK_SIZE;++i) {    
         dis[i] = getDistance(i);
         pc.printf("Distance Task %d: %f\n", i+1, dis[i]);
     }   
 }
 
 void printAngle() {
+    pc.printf("Current Angle: Task id, Angle\n");
     for(int i=0;i<MAX_TASK_SIZE;++i) {       
         ang[i] = getAngle(i);
         pc.printf("Angle Task %d: %f\n", i+1, ang[i]);
