@@ -60,6 +60,6 @@ extern double Final_Bearing;
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);
 vector<string> split(const string &s, char delim);
-double getDistance();
-double getAngle();
+double getDistance(int task_id);
+double getAngle(int task_id);
 double Deg2Rad(double degree);

@@ -62,6 +62,8 @@ int asterisk_idx;
 
 double Longitude_Path[MAX_TASK_SIZE];
 double Latitude_Path[MAX_TASK_SIZE];
+double dis[MAX_TASK_SIZE];
+double ang[MAX_TASK_SIZE];
 
 double angle_to_path_point,distance_to_path_point,desired_speed;
 double rudder_ctrl_parameters[3];
@@ -90,9 +92,11 @@ double GPSdecimal(double coordinate) {
      return ((int) coordinate) + ((coordinate-((int) coordinate))/60);    
 }
 
-void initialize_Path() {
+void initialize() {
     fill(Longitude_Path, Longitude_Path+MAX_TASK_SIZE, 181);
     fill(Latitude_Path, Latitude_Path+MAX_TASK_SIZE, 181);
+    fill(dis, dis+MAX_TASK_SIZE, -1);
+    fill(ang, ang+MAX_TASK_SIZE, -361);
 }
 
 void updateIMU(string IMU_data) {
@@ -229,8 +233,7 @@ void printPath() {
     }
 }
 
-void printDistance() {
-    double[MAX_TASK_SIZE] dis = fill_n(array, MAX_TASK_SIZE, -1);;
+void printDistance() {   
     for(int i=0;i<MAX_TASK_SIZE;++i) {       
         dis[i] = getDistance(i);
         pc.printf("Distance Task %d: %f\n", i+1, dis[i]);
@@ -238,7 +241,6 @@ void printDistance() {
 }
 
 void printAngle() {
-    double[MAX_TASK_SIZE] ang = fill_n(array, MAX_TASK_SIZE, -361);;
     for(int i=0;i<MAX_TASK_SIZE;++i) {       
         ang[i] = getAngle(i);
         pc.printf("Angle Task %d: %f\n", i+1, ang[i]);
@@ -414,9 +416,8 @@ int main() {
     pc.baud(115200);
     pc.attach(&PC_serial_ISR);
     ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
-   
     initialize_controller();
-    initialize_Path();
+    initialize();
     //float angle=20;    
     while (1) {
     //    if (angle>160){angle=20;}               
