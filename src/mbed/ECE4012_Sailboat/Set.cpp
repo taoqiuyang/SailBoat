@@ -6,9 +6,9 @@ string decodeCommandSET(string cmd) {
     vector<string> result = split(cmd, ',');
     string head = result.at(0);
     if (head == "PATH") {
-        double longitude = strtod(result.at(1).c_str(), NULL);
+        double latitude = strtod(result.at(1).c_str(), NULL);
         //pc.printf("%f\n",longitude);
-        double latitude = strtod(result.at(2).c_str(), NULL);
+        double longitude = strtod(result.at(2).c_str(), NULL);
         //pc.printf("%f\n",latitude);
         int task_id = atoi(result.at(3).c_str());
         //pc.printf("%d\n",task_id);

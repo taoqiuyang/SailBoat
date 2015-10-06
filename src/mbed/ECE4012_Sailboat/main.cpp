@@ -87,9 +87,11 @@ vector<string> split(const string &s, char delim) {
 
 double GPSdecimal(double coordinate) {
      //Convert a NMEA decimal-decimal value into decimal degree value
-     //5144.3855 (ddmm.mmmm) = 51 44.3855 = 51 + 44.3855/60 = 51.7397583 degrees
-     coordinate = coordinate/100;
-     return ((int) coordinate) + ((coordinate-((int) coordinate))/60);    
+     //5144.3855 (ddmm.mmmm) = 51 44.3855 = 51 + 0.443855/0.60 = 51.7397583 degrees
+     if(coordinate > 1000 or coordinate < -1000) {
+        coordinate = coordinate/100;
+     }
+     return ((int) coordinate) + ((coordinate-((int) coordinate))/0.60);    
 }
 
 void initialize() {
@@ -123,24 +125,29 @@ void updateGPS(string GPS_data) {
         if(GPS_Quality != "0" and GPS_Quality != "6") {
             GPS_UTC = result.at(0);
             D_GPS_UTC = strtod(GPS_UTC.c_str(), NULL);
+            //
             GPS_Latitude = result.at(1) + result.at(2);
             if (result.at(2) == "N") { // 0 means North
               D_GPS_Latitude_Direction = 0;
+              temp = result.at(1);
             } else if (result.at(2) == "S") { // 1 means South
               D_GPS_Latitude_Direction = 1;
               temp = "-" + result.at(1);  
             }
             D_temp = strtod(temp.c_str(), NULL);
             D_GPS_Latitude = GPSdecimal(D_temp);
+            //
             GPS_Longitude = result.at(3) + result.at(4);
             if (result.at(4) == "E") { // 0 means East
               D_GPS_Longitude_Direction = 0;
+              temp = result.at(3); 
             } else if (result.at(4) == "W") { // 1 means West
               D_GPS_Longitude_Direction = 1; 
               temp = "-" + result.at(3); 
             }
             D_temp = strtod(temp.c_str(), NULL);
             D_GPS_Longitude = GPSdecimal(D_temp);
+            //
             GPS_Num_Satellite = result.at(6);
             D_GPS_Num_Satellite = strtod(result.at(6).c_str(), NULL);
             GPS_HDOP = result.at(7);
@@ -236,7 +243,7 @@ void printPath() {
 void printDistance() {
     pc.printf("Current Distance: Task id, Distance\n");
     for(int i=0;i<MAX_TASK_SIZE;++i) {    
-        dis[i] = getDistance(i);
+        dis[i] = getDistance(i+1);
         pc.printf("Distance Task %d: %f\n", i+1, dis[i]);
     }   
 }
@@ -244,7 +251,7 @@ void printDistance() {
 void printAngle() {
     pc.printf("Current Angle: Task id, Angle\n");
     for(int i=0;i<MAX_TASK_SIZE;++i) {       
-        ang[i] = getAngle(i);
+        ang[i] = getAngle(i+1);
         pc.printf("Angle Task %d: %f\n", i+1, ang[i]);
     }   
 }
@@ -432,7 +439,7 @@ int main() {
         //printStateIMU();
         //printStateGPS();
         //printPath();
-        printDistance();
+        //printDistance();
         printAngle();
         led1 = !led1;
     }

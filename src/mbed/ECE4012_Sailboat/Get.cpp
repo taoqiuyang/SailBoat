@@ -52,38 +52,38 @@ double Rad2Degree(double radian) {
 
 double getDistance(int task_id) {
     double cur_Latitude = Deg2Rad(D_GPS_Latitude);
-    double cur_Logntitude = D_GPS_Longitude;
+    double cur_Logntitude = Deg2Rad(D_GPS_Longitude);
     double dest_Latitude = Deg2Rad(Latitude_Path[task_id-1]);
-    double dest_Longitude = Longitude_Path[task_id-1];
+    double dest_Longitude = Deg2Rad(Longitude_Path[task_id-1]);
     if(Latitude_Path[task_id-1] == 181 or Longitude_Path[task_id-1] == 181) {
         return -1;
     } else {
-        return acos(sin(cur_Latitude)*sin(dest_Latitude)+cos(cur_Latitude)*cos(dest_Latitude)*cos(Deg2Rad(dest_Longitude-cur_Logntitude)))*EARTH_RADIUS;
+        return acos(sin(cur_Latitude)*sin(dest_Latitude)+cos(cur_Latitude)*cos(dest_Latitude)*cos(dest_Longitude-cur_Logntitude))*EARTH_RADIUS;
     }
 }
 
 double getDistance_2dest(int task_id_start, int task_id_end) {
     double dest_Latitude_start = Deg2Rad(Latitude_Path[task_id_start-1]);
-    double dest_Longitude_start = Longitude_Path[task_id_start-1];
+    double dest_Longitude_start = Deg2Rad(Longitude_Path[task_id_start-1]);
     double dest_Latitude_end = Deg2Rad(Latitude_Path[task_id_end-1]);
-    double dest_Longitude_end = Longitude_Path[task_id_end-1];
+    double dest_Longitude_end = Deg2Rad(Longitude_Path[task_id_end-1]);
     if(Latitude_Path[task_id_start-1] == 181 or Longitude_Path[task_id_start-1] == 181 or Latitude_Path[task_id_end-1] == 181 or Longitude_Path[task_id_end-1] == 181) {
         return -1;
     } else {
-        return acos(sin(dest_Latitude_start)*sin(dest_Latitude_end)+cos(dest_Latitude_start)*cos(dest_Latitude_end)*cos(Deg2Rad(dest_Longitude_end-dest_Longitude_start)))*EARTH_RADIUS;
+        return acos(sin(dest_Latitude_start)*sin(dest_Latitude_end)+cos(dest_Latitude_start)*cos(dest_Latitude_end)*cos(dest_Longitude_end-dest_Longitude_start))*EARTH_RADIUS;
     }
 }
 
 double getAngle(int task_id) {
     double cur_Latitude = Deg2Rad(D_GPS_Latitude);
-    double cur_Logntitude = D_GPS_Longitude;
+    double cur_Logntitude = Deg2Rad(D_GPS_Longitude);
     double dest_Latitude = Deg2Rad(Latitude_Path[task_id-1]);
-    double dest_Longitude = Longitude_Path[task_id-1];
+    double dest_Longitude = Deg2Rad(Longitude_Path[task_id-1]);
     if(Latitude_Path[task_id-1] == 181 or Longitude_Path[task_id-1] == 181) {
         return -361;
     } else {
-        Initial_Bearing = Rad2Degree(atan2(cos(cur_Latitude)*sin(dest_Latitude)-sin(cur_Latitude)*cos(dest_Latitude)*cos(Deg2Rad(dest_Longitude-cur_Logntitude)),
-                          sin(Deg2Rad(dest_Longitude-cur_Logntitude))*cos(dest_Latitude)));
+        Initial_Bearing = Rad2Degree(atan2(sin(dest_Longitude-cur_Logntitude)*cos(dest_Latitude),
+                          cos(cur_Latitude)*sin(dest_Latitude)-sin(cur_Latitude)*cos(dest_Latitude)*cos(dest_Longitude-cur_Logntitude)));         
         Final_Bearing = ((int)(Initial_Bearing+180))%360;
         D_IMU_Y_north = (D_IMU_Y<=0)?(D_IMU_Y + 180):(D_IMU_Y - 180);
         double out =  (Initial_Bearing - D_IMU_Y_north< -180)?(Initial_Bearing - D_IMU_Y_north + 360):
