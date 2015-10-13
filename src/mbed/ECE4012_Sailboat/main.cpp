@@ -5,7 +5,7 @@ DigitalOut led2(LED2);
 DigitalOut led3(LED3);
 DigitalOut led4(LED4);
  
-Serial pc(USBTX, USBRX);
+Serial pc(p9, p10);
 Serial IMU(p28, p27);  // tx, rx
 Serial GPS(p13, p14);  // tx, rx
 Servo rudderServo(p25);
@@ -422,7 +422,7 @@ int main() {
     IMU.attach(&IMU_serial_ISR);
     GPS.baud(38400);
     GPS.attach(&GPS_serial_ISR);
-    pc.baud(115200);
+    pc.baud(9600);
     pc.attach(&PC_serial_ISR);
     ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
     initialize_controller();
@@ -436,11 +436,11 @@ int main() {
     
     
         wait(0.4);
-        //printStateIMU();
+        printStateIMU();
         //printStateGPS();
         //printPath();
         //printDistance();
-        printAngle();
+        //printAngle();
         led1 = !led1;
     }
 }
