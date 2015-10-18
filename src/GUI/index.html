@@ -10,16 +10,30 @@
 	<body>
 		<div id = "main">
 			<div id = "input">
-				latitude: <input type = "text" name = "lat" id = "latval">
-				longitude: <input type = "text" name = "lng" id = "lngval">
+				Latitude: <input type = "text" name = "lat" id = "latval">
+				Longitude: <input type = "text" name = "lng" id = "lngval">
 				<br/>
-				<button id = "add">Send</button>
+				<button id = "add">Add</button>
 				<button id = "delete">Delete</button>
+				<br/>
+				modify
+				<select id = "select">
+				  <option value="1">1st</option>
+				  <option value="2">2nd</option>
+				  <option value="3">3th</option>
+				  <option value="4">4th</option>
+				  <option value="5">5th</option>
+				</select>
+				way points
 			</div>
 		
 			<div id="map">
 			</div>
+			<div id = "send">
+				<button id = "delete">Send</button>
+			</div>
 		</div>
+
 		
 		<div id = "waypoints">
 			<table id = "pointTable" border="1">
@@ -30,6 +44,103 @@
 					<td>No.</td>
 					<td>Latitude</td> 
 					<td>Longitude</td>
+				</tr>
+				<tr>
+					<td>1</td>
+					<td></td> 
+					<td></td>
+				</tr>
+								<tr>
+					<td>2</td>
+					<td></td> 
+					<td></td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td></td> 
+					<td></td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td></td> 
+					<td></td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td></td> 
+					<td></td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id = "parameter">
+			<table id = "pointTable" border="1">
+				<tr>
+					<th colspan="2">Parameter</th>
+				</tr>
+				<tr>
+					<td>Name</td>
+					<td>Value</td> 
+				</tr>
+				<tr>
+					<td>IMU_Y</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>IMU_P</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>IMU_R</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Quality</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_UTC</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Latitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Longitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Altitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Num_Satellite</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_HDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_PDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Date</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VelocityKnot</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VelocityKph</td>
+					<td></td> 
 				</tr>
 			</table>
 		</div>

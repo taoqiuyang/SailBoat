@@ -54,12 +54,13 @@ extern double Longitude_Path[MAX_TASK_SIZE];
 extern double Latitude_Path[MAX_TASK_SIZE];
 extern Serial pc;
 
-extern double Initial_Bearing;
-extern double Final_Bearing;
-
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);
 vector<string> split(const string &s, char delim);
 double getDistance(int task_id);
 double getAngle(int task_id);
 double Deg2Rad(double degree);
+string stringify(double x);
+void printPath();
+void printDistance();
+void printAngle();

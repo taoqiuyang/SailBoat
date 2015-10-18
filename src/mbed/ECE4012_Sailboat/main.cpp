@@ -115,6 +115,15 @@ void updateIMU(string IMU_data) {
         }
 }
 
+string stringify(double x)
+ {
+   ostringstream o;
+   if (o << x) {
+    return o.str();
+    }
+    return NULL;
+ }
+ 
 void updateGPS(string GPS_data) {
     string GPS_data_string(GPS_data);
     if (GPS_data_string.substr(0,6) == "$GPGGA") {
@@ -126,7 +135,6 @@ void updateGPS(string GPS_data) {
             GPS_UTC = result.at(0);
             D_GPS_UTC = strtod(GPS_UTC.c_str(), NULL);
             //
-            GPS_Latitude = result.at(1) + result.at(2);
             if (result.at(2) == "N") { // 0 means North
               D_GPS_Latitude_Direction = 0;
               temp = result.at(1);
@@ -136,8 +144,8 @@ void updateGPS(string GPS_data) {
             }
             D_temp = strtod(temp.c_str(), NULL);
             D_GPS_Latitude = GPSdecimal(D_temp);
+            GPS_Latitude=stringify(D_GPS_Latitude);
             //
-            GPS_Longitude = result.at(3) + result.at(4);
             if (result.at(4) == "E") { // 0 means East
               D_GPS_Longitude_Direction = 0;
               temp = result.at(3); 
@@ -147,6 +155,7 @@ void updateGPS(string GPS_data) {
             }
             D_temp = strtod(temp.c_str(), NULL);
             D_GPS_Longitude = GPSdecimal(D_temp);
+            GPS_Longitude=stringify(D_GPS_Longitude);
             //
             GPS_Num_Satellite = result.at(6);
             D_GPS_Num_Satellite = strtod(result.at(6).c_str(), NULL);
@@ -208,6 +217,8 @@ void decodePC(string PC_data) {
             }
         }
         pc.printf("%s\n", claim.c_str());
+    } else {
+        pc.printf("Not supported command");
     }
 }
 
@@ -436,7 +447,7 @@ int main() {
     
     
         wait(0.4);
-        printStateIMU();
+        //printStateIMU();
         //printStateGPS();
         //printPath();
         //printDistance();

@@ -1,1 +1,1 @@
-wireless config
+more GET added, latitude longtitude string format fix

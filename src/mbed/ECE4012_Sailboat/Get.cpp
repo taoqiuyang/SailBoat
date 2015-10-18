@@ -35,6 +35,15 @@ string decodeCommandGET(string cmd) {
         return(GPS_VelocityKnot);
     } else if (cmd == "GPS_VelocityKph") {
         return(GPS_VelocityKph);
+    } else if (cmd == "Path") {
+        printPath();
+        return NULL;
+    } else if (cmd == "Distance") {
+        printDistance();
+        return NULL;
+    } else if (cmd == "Angle") {
+        printAngle();
+        return NULL;
     } else {
         return("Not valid command, example: @GET=GPS_Quality");
     }

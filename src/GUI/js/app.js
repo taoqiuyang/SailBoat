@@ -3,20 +3,12 @@ var markers = [];
 
 $(document).ready(function() {
 	
-	function updateTable(){
+	function updateTable(taskid){
 		var table = document.getElementById("pointTable");
+		var index = parseInt(taskid)+1;
+		table.rows[index].cells[1].innerHTML = waypoint[taskid - 1].lat;
+		table.rows[index].cells[2].innerHTML = waypoint[taskid - 1].lng;
 		var rowNumber = waypoint.length;
-		var row = table.insertRow(rowNumber + 1);
-		
-		var cell1 = row.insertCell(0);
-		var cell2 = row.insertCell(1);
-		var cell3 = row.insertCell(2);
-		
-		// Add some text to the new cells:
-		var num = waypoint.length;
-		cell1.innerHTML = num;
-		cell2.innerHTML = waypoint[num - 1].lat;
-		cell3.innerHTML = waypoint[num - 1].lng;
 	}
 	
 	function initialize() {
@@ -49,46 +41,63 @@ $(document).ready(function() {
 			//calculate center
 			var ave_lat = 0;
 			var ave_lng = 0;
-			
+			var count = 0;
 			for (var i = 0; i < waypoint.length; i++){
-				ave_lat = ave_lat + Number(waypoint[i].lat);
-				ave_lng = ave_lng + Number(waypoint[i].lng);
+				if(waypoint[i]) {
+					ave_lat = ave_lat + Number(waypoint[i].lat);
+					ave_lng = ave_lng + Number(waypoint[i].lng);
+					count++;
+				}
 			}
 			
-			ave_lat = ave_lat / waypoint.length;
-			ave_lng = ave_lng / waypoint.length;
+			ave_lat = ave_lat / count;
+			ave_lng = ave_lng / count;
 			
 			map.setCenter(new google.maps.LatLng(ave_lat, ave_lng));
 		}
 		
 		$("#add").click(function(){
 			var location = new google.maps.LatLng($("#latval").val(), $("#lngval").val());
-			waypoint.push({
+			var e = document.getElementById("select");
+			var taskid = e.options[e.selectedIndex].value;
+
+			waypoint[taskid-1] = {
 				lat: $("#latval").val(), 
 				lng: $("#lngval").val()
-			});
+			};
+
 			
 			resetCenter();
-			updateTable();
+			updateTable(taskid);
 			
 			var marker = new google.maps.Marker({
 				position: location,
-				map: map
+				animation: google.maps.Animation.DROP,
 			});
 			
-			markers.push(marker);
+			if(markers[taskid-1]) {
+				markers[taskid-1].setMap(null);
+			}
+			markers[taskid-1] = marker;
+			markers[taskid-1].setMap(map);
 		})
 		
 		
 		$("#delete").click(function(){
 			var num = waypoint.length;
-			
+			var e = document.getElementById("select");
+			var taskid = e.options[e.selectedIndex].value;
 			
 			if(num > 0){
-				waypoint.pop();
-				markers[markers.length - 1].setMap(null);
-				markers.pop();
-				document.getElementById("pointTable").deleteRow(num + 1);
+				waypoint[taskid-1] = null;
+				if(markers[taskid-1]) {
+					markers[taskid-1].setMap(null);
+				}
+				markers[taskid-1] = null;
+				var table = document.getElementById("pointTable");
+				var index = parseInt(taskid)+1;
+				table.rows[index].cells[1].innerHTML = null;
+				table.rows[index].cells[2].innerHTML = null;
 				if(num > 1){
 					resetCenter();
 				}
