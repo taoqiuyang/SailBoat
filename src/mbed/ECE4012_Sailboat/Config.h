@@ -53,6 +53,8 @@ extern double D_GPS_VelocityKph;
 extern double Longitude_Path[MAX_TASK_SIZE];
 extern double Latitude_Path[MAX_TASK_SIZE];
 extern Serial pc;
+extern Servo rudderServo;
+extern Servo wingServo;
 
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);

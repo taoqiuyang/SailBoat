@@ -35,13 +35,13 @@ string decodeCommandGET(string cmd) {
         return(GPS_VelocityKnot);
     } else if (cmd == "GPS_VelocityKph") {
         return(GPS_VelocityKph);
-    } else if (cmd == "Path") {
+    } else if (cmd == "PATH") {
         printPath();
         return NULL;
-    } else if (cmd == "Distance") {
+    } else if (cmd == "DISTANCE") {
         printDistance();
         return NULL;
-    } else if (cmd == "Angle") {
+    } else if (cmd == "ANGLE") {
         printAngle();
         return NULL;
     } else {

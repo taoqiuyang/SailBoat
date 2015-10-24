@@ -19,7 +19,23 @@ string decodeCommandSET(string cmd) {
             Latitude_Path[task_id-1] = latitude;
             return "DONE";
         }
+    } else if(head == "SERVO") {
+        string servo = result.at(1);
+        double angle = strtod(result.at(2).c_str(), NULL);
+        if(servo == "RUDDER" or servo == "WING"){
+            if(angle<=45 and angle >= -45) {
+                if(servo == "RUDDER"){
+                    set_servo_position(rudderservo, angle, 0, 0, 180, 1);
+                } else {
+                    set_servo_position(wingservo, angle, 0, 0, 180, 1);
+                }
+            } else {
+                return("angle should be within range +/ 45");
+            }
+        } else {
+            return("SERVO type should be RUDDER or WING");
+        }
     } else {
-        return("Not valid command, example: @SET=PATH, 33.776318, -84.407590, 3");
+        return("Not valid command, example: @SET=PATH, 33.776318, -84.407590, 3 or @SET=SERVO, RUDDER, 30");
     }
 }

@@ -217,8 +217,10 @@ void decodePC(string PC_data) {
             }
         }
         pc.printf("%s\n", claim.c_str());
+    } else if(PC_data_string.substr(0,6) == "@Hello") {
+        pc.printf("Successfully connected to mbed\n");
     } else {
-        pc.printf("Not supported command");
+        pc.printf("Not supported command\n");
     }
 }
 
@@ -445,7 +447,7 @@ int main() {
     //    set_servo_position(wingServo, angle, 0, 0, 180, 1);        
     //    angle=angle+10;
     
-    
+        
         wait(0.4);
         //printStateIMU();
         //printStateGPS();
