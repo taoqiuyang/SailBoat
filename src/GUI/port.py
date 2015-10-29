@@ -13,7 +13,9 @@ ser = serial.Serial(
 print("connected to: " + ser.portstr)
 
 while True:
-    line = ser.readline()
-    print(line)
+	line = ser.readline()
+	print(line)
+	input = raw_input("enter your input: ")
+	ser.write(input)
 
 ser.close()

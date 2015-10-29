@@ -56,6 +56,7 @@ extern Serial pc;
 extern Servo rudderServo;
 extern Servo wingServo;
 
+void set_servo_position(Servo targetServo, float angleDeg, float minDeg, float minNorVal, float maxDeg, float maxNorVal);
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);
 vector<string> split(const string &s, char delim);

@@ -25,10 +25,11 @@ string decodeCommandSET(string cmd) {
         if(servo == "RUDDER" or servo == "WING"){
             if(angle<=45 and angle >= -45) {
                 if(servo == "RUDDER"){
-                    set_servo_position(rudderservo, angle, 0, 0, 180, 1);
+                    set_servo_position(rudderServo, angle, 0, 0, 180, 1);
                 } else {
-                    set_servo_position(wingservo, angle, 0, 0, 180, 1);
+                    set_servo_position(wingServo, angle, 0, 0, 180, 1);
                 }
+                return("angle set");
             } else {
                 return("angle should be within range +/ 45");
             }

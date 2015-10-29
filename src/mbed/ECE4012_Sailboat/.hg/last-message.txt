@@ -1,1 +1,1 @@
-servo angle code setup
+python code configuration finished; 

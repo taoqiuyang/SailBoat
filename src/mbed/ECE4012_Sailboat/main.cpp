@@ -4,7 +4,7 @@ DigitalOut led1(LED1);
 DigitalOut led2(LED2);
 DigitalOut led3(LED3);
 DigitalOut led4(LED4);
- 
+
 Serial pc(p9, p10);
 Serial IMU(p28, p27);  // tx, rx
 Serial GPS(p13, p14);  // tx, rx
@@ -289,7 +289,7 @@ void IMU_serial_ISR() {
         }
 
     }
-    led2 = !led2;
+    //led2 = !led2;
 }
 
 
@@ -313,7 +313,7 @@ void GPS_serial_ISR() {
         }  
     }
     
-    led3 = !led3;
+    //led3 = !led3;
 }
  
 void PC_serial_ISR() {
@@ -321,12 +321,12 @@ void PC_serial_ISR() {
     
      while (pc.readable()) {
         buf = pc.getc();
-        
+                        
         //pc.putc(buf); 
         PC_message[PC_message_counter]=buf;
         PC_message_counter+=1;
         
-        if (buf=='\n'){
+        if (buf=='\n'or buf =='#'){
             string PC_copy(PC_message, PC_message_counter);
             //pc.printf("%s", PC_copy.c_str());
             decodePC(PC_copy);
@@ -335,7 +335,7 @@ void PC_serial_ISR() {
         }   
     }
     
-    led4= !led4;
+    //led4= !led4;
 }
 
 
@@ -446,14 +446,15 @@ int main() {
     //    set_servo_position(rudderServo, angle, 0, 0, 180, 1);
     //    set_servo_position(wingServo, angle, 0, 0, 180, 1);        
     //    angle=angle+10;
-    
-        
+     //   pc.printf("Hello World!\n");
+
         wait(0.4);
         //printStateIMU();
         //printStateGPS();
         //printPath();
         //printDistance();
         //printAngle();
-        led1 = !led1;
+        //led1 = !led1;
+    
     }
 }
