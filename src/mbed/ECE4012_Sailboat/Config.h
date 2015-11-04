@@ -52,6 +52,8 @@ extern double D_GPS_VelocityKph;
 
 extern double Longitude_Path[MAX_TASK_SIZE];
 extern double Latitude_Path[MAX_TASK_SIZE];
+extern int IF_Path_Complete[MAX_TASK_SIZE];
+extern int current_task;
 extern Serial pc;
 extern Servo rudderServo;
 extern Servo wingServo;
@@ -60,8 +62,10 @@ void set_servo_position(Servo targetServo, float angleDeg, float minDeg, float m
 string decodeCommandGET(string cmd);
 string decodeCommandSET(string cmd);
 vector<string> split(const string &s, char delim);
+int get_current_task();
 double getDistance(int task_id);
 double getAngle(int task_id);
+double getCTE(int task_id);
 double Deg2Rad(double degree);
 string stringify(double x);
 void printPath();

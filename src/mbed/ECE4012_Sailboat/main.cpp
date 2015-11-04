@@ -6,6 +6,7 @@ DigitalOut led3(LED3);
 DigitalOut led4(LED4);
 
 Serial pc(p9, p10);
+//Serial pc(USBTX, USBRX);
 Serial IMU(p28, p27);  // tx, rx
 Serial GPS(p13, p14);  // tx, rx
 Servo rudderServo(p25);
@@ -59,17 +60,21 @@ double D_GPS_VelocityKnot=0;
 double D_GPS_VelocityKph=0;
 double D_temp=0;
 int asterisk_idx;
+int current_task=0;
 
 double Longitude_Path[MAX_TASK_SIZE];
 double Latitude_Path[MAX_TASK_SIZE];
+int IF_Path_Complete[MAX_TASK_SIZE];
 double dis[MAX_TASK_SIZE];
 double ang[MAX_TASK_SIZE];
 
-double angle_to_path_point,distance_to_path_point,desired_speed;
+int autonomous_mode=0;
+int arrived_destination=0; // fot test purpose
+
+double angle_to_path_point,distance_to_path_point,desired_speed,distance_to_route;
 double rudder_ctrl_parameters[3];
 double rudder_variables[5];//,,,prev,out
-double distance_to_route;
-double T=0.2; //controller update period=0.2sec, 5Hz
+double T=0.5; //controller update period=0.5sec, 2Hz
 
 
 vector<string> split(const string &s, char delim) {
@@ -97,8 +102,10 @@ double GPSdecimal(double coordinate) {
 void initialize() {
     fill(Longitude_Path, Longitude_Path+MAX_TASK_SIZE, 181);
     fill(Latitude_Path, Latitude_Path+MAX_TASK_SIZE, 181);
+    fill(IF_Path_Complete, IF_Path_Complete+MAX_TASK_SIZE, 0);
     fill(dis, dis+MAX_TASK_SIZE, -1);
     fill(ang, ang+MAX_TASK_SIZE, -361);
+    current_task = 1;
 }
 
 void updateIMU(string IMU_data) {
@@ -379,6 +386,7 @@ void initialize_controller(){
     rudder_ctrl_parameters[2]=0;
 }
 
+
 void update_controller_tmr_ISR() {
     /*Input:  angle(deg) difference between heading from IMU and path point航向与目的点之间的夹角   
               angle to path point
@@ -388,6 +396,8 @@ void update_controller_tmr_ISR() {
       
       Function: drive two servos to navigate the sailboat to the desired path point
     */
+    
+    
     
     //CTE based controller for rudder
     if (angle_to_path_point<0){distance_to_route=-1*distance_to_route;}
@@ -402,18 +412,68 @@ void update_controller_tmr_ISR() {
         //Our sailboat is a slow moving vehicle and GPS cannot provide 
         //very accurate speed reading in our application
     if (distance_to_path_point>30){
-        set_servo_position(wingServo,45,-45,0,45,1);
+        if (autonomous_mode){set_servo_position(wingServo,45,-45,0,45,1);}
     }else{
-        set_servo_position(wingServo,0,-45,0,45,1);
+        if (autonomous_mode){set_servo_position(wingServo,0,-45,0,45,1);}
     }
     
     //actuator saturation
-    if (rudder_variables[4]> 60){rudder_variables[4]= 60;}
-    if (rudder_variables[4]<-60){rudder_variables[4]=-60;}
+    if (rudder_variables[4]> 45){rudder_variables[4]= 45;}
+    if (rudder_variables[4]<-45){rudder_variables[4]=-45;}
     
     //Drive servos
-    set_servo_position(rudderServo,rudder_variables[4],-45,0,45,1);
+    if (autonomous_mode){set_servo_position(rudderServo,rudder_variables[4],-45,0,45,1);}
+    
+    pc.printf("%f\n",rudder_variables[4]);
 }
+
+
+
+
+void update_controller_tmr_ISR2() {
+    /*Input:  angle(deg) difference between heading from IMU and path point航向与目的点之间的夹角   
+              distance(meter) to the next path point
+      Global Variables: angle_to_path_point,distance_to_path_point,distance_to_route;
+      
+      Function: drive two servos to navigate the sailboat to the desired path point
+    */
+
+    rudder_variables[0]=rudder_ctrl_parameters[0]*angle_to_path_point;
+    rudder_variables[1]=rudder_variables[1]+rudder_ctrl_parameters[1]*angle_to_path_point*T;
+    rudder_variables[2]=(rudder_variables[3]-angle_to_path_point)/T;
+    rudder_variables[3]=angle_to_path_point;
+    rudder_variables[4]=rudder_variables[0]+rudder_variables[1]+rudder_variables[2];
+    
+    /*if (distance_to_route>0){
+        rudder_variables[4]=rudder_variables[4]+10;
+    }else{
+        rudder_variables[4]=rudder_variables[4]-10;
+    }*/
+    
+    
+    //bang-bang controller for vehicle velocity
+        //Our sailboat is a slow moving vehicle and GPS cannot provide 
+        //very accurate speed reading in our application
+    if (distance_to_path_point>30){
+        if (autonomous_mode){set_servo_position(wingServo,45,-45,0,45,1);}
+        arrived_destination=0;
+    }else{
+        if (autonomous_mode){set_servo_position(wingServo,0,-45,0,45,1);}
+        arrived_destination=1;
+        IF_Path_Complete[current_task]=1;
+    }
+    
+    //actuator saturation
+    if (rudder_variables[4]> 45){rudder_variables[4]= 45;}
+    if (rudder_variables[4]<-45){rudder_variables[4]=-45;}
+    
+    //Drive servos
+    if (autonomous_mode){set_servo_position(rudderServo,rudder_variables[4],-45,0,45,1);}
+    
+    pc.printf("%f\n",rudder_variables[4]);
+}
+
+
 
 
 
@@ -437,18 +497,28 @@ int main() {
     GPS.attach(&GPS_serial_ISR);
     pc.baud(9600);
     pc.attach(&PC_serial_ISR);
-    ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
+    //ctrl_updt_timer.attach(&update_controller_tmr_ISR, T); // Update controller at 1/T Hz
+    ctrl_updt_timer.attach(&update_controller_tmr_ISR2, T); // Update controller at 1/T Hz
     initialize_controller();
     initialize();
     //float angle=20;    
     while (1) {
+        current_task = get_current_task();
+        angle_to_path_point=getAngle(current_task);  //positive if pathpoint is on the right of the boat
+        distance_to_path_point=getCTE(current_task); //positive if trace is on the right of the boat
+        distance_to_route=getDistance(current_task);  //no sign
+        
+        arrived_destination=0; //will be 1 if arrived destination
+        autonomous_mode=0; //set 1 if in autonomous mode, set 0 bypass the controller
+                           
+        
+        
     //    if (angle>160){angle=20;}               
     //    set_servo_position(rudderServo, angle, 0, 0, 180, 1);
     //    set_servo_position(wingServo, angle, 0, 0, 180, 1);        
     //    angle=angle+10;
-     //   pc.printf("Hello World!\n");
 
-        wait(0.4);
+        wait(2);
         //printStateIMU();
         //printStateGPS();
         //printPath();

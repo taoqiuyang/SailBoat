@@ -49,7 +49,14 @@ string decodeCommandGET(string cmd) {
     }
 }
 
-
+int get_current_task() {
+    for(int i=0;i<MAX_TASK_SIZE;i++){
+        if(IF_Path_Complete[i]==0) {
+            return i+1;
+        }
+    }
+    return 1;
+}
 
 double Deg2Rad(double degree) {
     return degree*DEG2RAD_RATIO;

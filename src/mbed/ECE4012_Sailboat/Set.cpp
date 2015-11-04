@@ -22,16 +22,16 @@ string decodeCommandSET(string cmd) {
     } else if(head == "SERVO") {
         string servo = result.at(1);
         double angle = strtod(result.at(2).c_str(), NULL);
-        if(servo == "RUDDER" or servo == "WING"){
+        if(servo == "RUDDER" or servo == " RUDDER" or servo == "WING" or servo == " WING"){
             if(angle<=45 and angle >= -45) {
-                if(servo == "RUDDER"){
+                if(servo == "RUDDER" or servo == " RUDDER"){
                     set_servo_position(rudderServo, angle, 0, 0, 180, 1);
                 } else {
                     set_servo_position(wingServo, angle, 0, 0, 180, 1);
                 }
                 return("angle set");
             } else {
-                return("angle should be within range +/ 45");
+                return("angle should be within range 0-180");
             }
         } else {
             return("SERVO type should be RUDDER or WING");
