@@ -52,13 +52,18 @@ class Window(QWidget):
 		self.show()
 	
 	@pyqtSlot(float, float)
-	def send_to_boat(self, lat, lng):
+	def send_to_boat_path(self, lat, lng, id):
 		'''
 		frame = self.browser.page().currentFrame()
 		frame.evaluateJavaScript("addMarker(-33.89,151.275)")
 		'''
-		print (str(lat) + str(lng))
-		self.ser.write(str(lat) + " " + str(lng) + "#\n")
+		print ("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
+		self.ser.write("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
+
+	def send_to_boat_servo(self, servo, degree):
+
+		print ("@SET=SERVO, " + str(servo) + ", " + str(degree) + "#")
+		self.ser.write("@SET=SERVO, " + str(servo) + ", " + str(degree) + "#")
 		
 	def start_threads(self):
 		thread = MyThread(self)    # create a thread
@@ -67,7 +72,8 @@ class Window(QWidget):
 		self.thread = thread
 
 	def update_info(self):
-		self.ser.write("X")
+		print ("@GET=GPS_Quality#")
+		self.ser.write("@GET=GPS_Quality#")
 		content = ""
 		while not content:
 			content = self.ser.readline()

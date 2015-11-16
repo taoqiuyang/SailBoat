@@ -13,10 +13,18 @@
 				Latitude: &nbsp;&nbsp;&nbsp;&nbsp;<input type = "text" name = "lat" id = "latval"> <br/>
 				Longitude: &nbsp;<input type = "text" name = "lng" id = "lngval">
 				&nbsp;&nbsp;&nbsp;&nbsp;
-			
+				<br/><br/>
+			    Set &nbsp;&nbsp;
+				<select id = "select_servo">
+				  <option value="RUDDER">Rudder Servo</option>
+				  <option value="WING">Wing Servo</option>
+				</select>
+				to 
+				<input type="number" name="quantity" id="degree" min="0" max="180"> 
+				degree (between 0 and 180)
 				<br/><br/>
 				Modify &nbsp;&nbsp;
-				<select id = "select">
+				<select id = "select_waypoints">
 				  <option value="1">1st</option>
 				  <option value="2">2nd</option>
 				  <option value="3">3th</option>
@@ -26,7 +34,8 @@
 				Way Point <br/><br/>
 				<button id = "add">Add</button>
 				<button id = "delete">Delete</button>
-				<button id = "send">Send</button>
+				<button id = "setpath">Set Path</button>
+				<button id = "setservo">Set Rudder</button>
 			</div>
 		
 			<div id = "waypoints">
@@ -72,6 +81,77 @@
 				
 		</div>
 		
+		<div id = "parameter">
+			<table id = "pointTable" border="1">
+				<tr>
+					<th colspan="2">Parameter</th>
+				</tr>
+				<tr>
+					<td>Name</td>
+					<td>Value</td> 
+				</tr>
+				<tr>
+					<td>IMU_Y</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>IMU_P</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>IMU_R</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Quality</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_UTC</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Latitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Longitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Altitude</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Num_Satellite</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_HDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_PDOP</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_Date</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VelocityKnot</td>
+					<td></td> 
+				</tr>
+				<tr>
+					<td>GPS_VelocityKph</td>
+					<td></td> 
+				</tr>
+			</table>
+		</div>
 	</body>
 
 </html>

@@ -61,7 +61,7 @@ $(document).ready(function() {
 		
 		$("#add").click(function(){
 			var location = new google.maps.LatLng($("#latval").val(), $("#lngval").val());
-			var e = document.getElementById("select");
+			var e = document.getElementById("select_waypoints");
 			var taskid = e.options[e.selectedIndex].value;
 
 			waypoint[taskid-1] = {
@@ -88,7 +88,7 @@ $(document).ready(function() {
 		
 		$("#delete").click(function(){
 			var num = waypoint.length;
-			var e = document.getElementById("select");
+			var e = document.getElementById("select_waypoints");
 			var taskid = e.options[e.selectedIndex].value;
 			
 			if(num > 0){
@@ -107,17 +107,25 @@ $(document).ready(function() {
 			}
 		})
 		
-		//send information to mbed
-		$("#send").click(function(){
+		//send path information to mbed
+		$("#setpath").click(function(){
 			for (var i = 0; i < waypoint.length; i++){
 				if(waypoint[i]) {
 					lat = Number(waypoint[i].lat);
 					lng = Number(waypoint[i].lng);
-					self.send_to_boat(lat, lng);
+					self.send_to_boat_path(lat, lng, i+1);
 				}
 				//force a wait time, js doesn't have wait function
 				for(var j = 0; j < 100000000; j++){}
 			}
+		})
+		//send rudder information to mbed
+		$("#setservo").click(function(){
+			var e = document.getElementById("select_servo");
+			var rudder = e.options[e.selectedIndex].value;
+			self.send_to_boat_servo(rudder,  $("#degree").val());
+			//force a wait time, js doesn't have wait function
+			for(var j = 0; j < 100000000; j++){}
 		})
 	}
 	

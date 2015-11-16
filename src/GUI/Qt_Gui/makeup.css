@@ -24,10 +24,18 @@ body {
 
 #waypoints{
 	vertical-align: top;
-	width: 300px;
+	width: 610px;
 	height: 500px;
-	margin-top:-171px;
-	margin-left: 310px;
+	margin-top:0px;
+	margin-left: 0px;
+}
+
+#parameter{
+	vertical-align: top;
+	width: 610px;
+	height: 500px;
+	margin-top:-0px;
+	margin-left: 0px;
 }
 
 #pointTable{
