@@ -1,7 +1,15 @@
 var waypoint = [];
 var markers = [];
 
+function update_GPS_table(value){
+	var myTable = document.getElementById('gpsTable');
+	myTable.rows[2].cells[1].innerHTML = value;
+}
 $(document).ready(function() {
+	function update_GPS_table(value){
+		var myTable = document.getElementById('gpsTable');
+		myTable.rows[2].cells[1].innerHTML = value;
+	}
 	
 	function updateTable(taskid){
 		var table = document.getElementById("pointTable");
@@ -123,6 +131,13 @@ $(document).ready(function() {
 		$("#setservo").click(function(){
 			var e = document.getElementById("select_servo");
 			var rudder = e.options[e.selectedIndex].value;
+			
+			//it's hard to send string, send float then do conversion instead
+			if(rudder == "RUDDER"){
+				rudder = 0.0;
+			} else {
+				rudder = 1.0;
+			}
 			self.send_to_boat_servo(rudder,  $("#degree").val());
 			//force a wait time, js doesn't have wait function
 			for(var j = 0; j < 100000000; j++){}

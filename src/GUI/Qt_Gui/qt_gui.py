@@ -14,7 +14,7 @@ class MyThread(QtCore.QThread):
 	
 	def run(self):
 		while 1:
-			time.sleep(4)  # random sleep to imitate working
+			time.sleep(5)  # random sleep to imitate working
 			self.trigger.emit(1)
 
 class Window(QWidget):
@@ -51,17 +51,19 @@ class Window(QWidget):
 		self.setLayout(grid)
 		self.show()
 	
+	# this function will be called by javascript
 	@pyqtSlot(float, float)
 	def send_to_boat_path(self, lat, lng, id):
-		'''
-		frame = self.browser.page().currentFrame()
-		frame.evaluateJavaScript("addMarker(-33.89,151.275)")
-		'''
 		print ("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
 		self.ser.write("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
-
+	
+	# this function will be called by javascript
+	@pyqtSlot(float, float)
 	def send_to_boat_servo(self, servo, degree):
-
+		if servo == 0.0:
+			servo = "RUDDER"
+		else:
+			servo = "WING"
 		print ("@SET=SERVO, " + str(servo) + ", " + str(degree) + "#")
 		self.ser.write("@SET=SERVO, " + str(servo) + ", " + str(degree) + "#")
 		
@@ -77,12 +79,16 @@ class Window(QWidget):
 		content = ""
 		while not content:
 			content = self.ser.readline()
+		'''
 		self.textarea.clear()
 		self.textarea.append(content)
-
+		'''
+		command = 'update_GPS_table(' + "\"" + content + "\"" + ')'
+		print command
+		frame = self.browser.page().currentFrame()
+		frame.evaluateJavaScript(command)
+		
 		
 app = QtGui.QApplication(sys.argv)
-
 Gui = Window()
-#thread.finished.connect(app.exit)
 sys.exit(app.exec_())
