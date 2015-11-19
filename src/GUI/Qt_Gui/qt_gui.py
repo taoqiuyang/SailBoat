@@ -24,7 +24,7 @@ class Window(QWidget):
 		self.setWindowTitle("Sailboat")
 		
 		self.ser = serial.Serial(
-			port='COM2',\
+			port='COM6',\
 			baudrate=9600,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\
@@ -39,23 +39,24 @@ class Window(QWidget):
 		self.browser.load(QUrl("index.html"))
 		self.browser.page().mainFrame().addToJavaScriptWindowObject('self', self) # bind the html with python
 		
-		
+		'''
 		self.textarea = QTextEdit()
 		self.textarea.setReadOnly(True)
 		self.textarea.setText("asdasd")
 		self.textarea.resize(100, 100)
-		
+		'''
 		grid = QGridLayout()
 		grid.addWidget(self.browser, 2, 0)
-		grid.addWidget(self.textarea, 1, 0)
+		#grid.addWidget(self.textarea, 1, 0)
 		self.setLayout(grid)
 		self.show()
 	
 	# this function will be called by javascript
-	@pyqtSlot(float, float)
+	@pyqtSlot(float, float, float)
 	def send_to_boat_path(self, lat, lng, id):
 		print ("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
 		self.ser.write("@SET=PATH, " + str(lat) + ", " + str(lng)+ ", " + str(id) + "#")
+	
 	
 	# this function will be called by javascript
 	@pyqtSlot(float, float)
@@ -74,16 +75,52 @@ class Window(QWidget):
 		self.thread = thread
 
 	def update_info(self):
-		print ("@GET=GPS_Quality#")
+		
+		self.ser.write("@GET=IMU_Y#")
+		imu_y = ""
+		while not imu_y:
+			imu_y = self.ser.readline()
+		
+		self.ser.write("@GET=IMU_P#")
+		imu_p = ""
+		while not imu_p:
+			imu_p = self.ser.readline()
+		
+		self.ser.write("@GET=IMU_R#")
+		imu_r = ""
+		while not imu_r:
+			imu_r = self.ser.readline()
+		
 		self.ser.write("@GET=GPS_Quality#")
-		content = ""
-		while not content:
-			content = self.ser.readline()
+		gps_quality = ""
+		while not gps_quality:
+			gps_quality = self.ser.readline()
+			
+		self.ser.write("@GET=GPS_Latitude#")
+		lat = ""
+		while not lat:
+			lat = self.ser.readline()
+		
+		self.ser.write("@GET=GPS_Longitude#")
+		lng = ""
+		while not lng:
+			lng = self.ser.readline()
+		
+		self.ser.write("@GET=GPS_Altitude#")
+		alt = ""
+		while not alt:
+			alt = self.ser.readline()
+		
 		'''
 		self.textarea.clear()
 		self.textarea.append(content)
 		'''
-		command = 'update_GPS_table(' + "\"" + content + "\"" + ')'
+		#command = "update_GPS_table1('5')"
+		#command = "update_GPS_table(" + '\'' + imu_y + '\'' + ',\'' + imu_p + '\'' + ',\'' + imu_r + '\'' + ")"
+		command = "update_GPS_table(" + imu_y + "," + imu_p + "," + imu_r + ")"
+		#command = "update_GPS_table(" + imu_y + "," + imu_p + "," + imu_r + "," + gps_quality + "," + lat + "," + lng + "," + alt + ")"
+	
+		#command = 'update_GPS_table(' + "\"" + imu_y + "\"," + "\"" + imu_p + "\"," + "\"" + imu_r + "\"," + "\"" + gps_quality + "\"," + "\"" + lat + "\"," + "\"" + lng + "\"," + "\"" + alt + "\""')'
 		print command
 		frame = self.browser.page().currentFrame()
 		frame.evaluateJavaScript(command)

@@ -1,15 +1,28 @@
 var waypoint = [];
 var markers = [];
 
-function update_GPS_table(value){
+function update_GPS_table(imu_y, imu_p, imu_r){
 	var myTable = document.getElementById('gpsTable');
-	myTable.rows[2].cells[1].innerHTML = value;
+	myTable.rows[2].cells[1].innerHTML = imu_y; //imu_y
+	myTable.rows[3].cells[1].innerHTML = imu_p; //imu_p
+	myTable.rows[4].cells[1].innerHTML = imu_r; //imu_r
+	//myTable.rows[5].cells[1].innerHTML = gps_quality; //gps_quality
+	//myTable.rows[6].cells[1].innerHTML = value; //gps_utc
+	/*
+	myTable.rows[7].cells[1].innerHTML = lat; //latitude
+	myTable.rows[8].cells[1].innerHTML = lng; //longtitude
+	myTable.rows[9].cells[1].innerHTML = alt; //altitude
+	*/
+	/*myTable.rows[10].cells[1].innerHTML = value; //num_satellite
+	myTable.rows[10].cells[1].innerHTML = value; //hdop
+	myTable.rows[10].cells[1].innerHTML = value; //vdop
+	myTable.rows[10].cells[1].innerHTML = value; //pdop
+	myTable.rows[10].cells[1].innerHTML = value; //date
+	myTable.rows[10].cells[1].innerHTML = value; //v_knot
+	myTable.rows[10].cells[1].innerHTML = value; //v_kph */
 }
+
 $(document).ready(function() {
-	function update_GPS_table(value){
-		var myTable = document.getElementById('gpsTable');
-		myTable.rows[2].cells[1].innerHTML = value;
-	}
 	
 	function updateTable(taskid){
 		var table = document.getElementById("pointTable");
