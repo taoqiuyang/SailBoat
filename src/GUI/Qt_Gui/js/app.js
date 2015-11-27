@@ -1,27 +1,82 @@
 var waypoint = [];
 var markers = [];
 
-function update_GPS_table(imu_y, imu_p, imu_r){
+function update_GPS_table(imu_y, imu_p, imu_r, gps_quality, gps_utc_flag, gps_utc_hour, gps_utc_minute, gps_utc_second,
+						lat, lng, alt, num_satellite, hdop, vdop, pdop, date, v_knot, v_kph, NAdouble){
 	var myTable = document.getElementById('gpsTable');
-	myTable.rows[2].cells[1].innerHTML = imu_y; //imu_y
-	myTable.rows[3].cells[1].innerHTML = imu_p; //imu_p
-	myTable.rows[4].cells[1].innerHTML = imu_r; //imu_r
-	//myTable.rows[5].cells[1].innerHTML = gps_quality; //gps_quality
-	//myTable.rows[6].cells[1].innerHTML = value; //gps_utc
-	/*
-	myTable.rows[7].cells[1].innerHTML = lat; //latitude
-	myTable.rows[8].cells[1].innerHTML = lng; //longtitude
-	myTable.rows[9].cells[1].innerHTML = alt; //altitude
-	*/
-	/*myTable.rows[10].cells[1].innerHTML = value; //num_satellite
-	myTable.rows[10].cells[1].innerHTML = value; //hdop
-	myTable.rows[10].cells[1].innerHTML = value; //vdop
-	myTable.rows[10].cells[1].innerHTML = value; //pdop
-	myTable.rows[10].cells[1].innerHTML = value; //date
-	myTable.rows[10].cells[1].innerHTML = value; //v_knot
-	myTable.rows[10].cells[1].innerHTML = value; //v_kph */
+	myTable.rows[2].cells[1].innerHTML = parse_double(imu_y, NAdouble); //imu_y
+	myTable.rows[3].cells[1].innerHTML = parse_double(imu_p, NAdouble); //imu_p
+	myTable.rows[4].cells[1].innerHTML = parse_double(imu_r, NAdouble); //imu_r
+	if(gps_quality == NAdouble){
+		myTable.rows[5].cells[1].innerHTML = "N/A";
+	} else {
+		if(gps_quality == 0) {
+			myTable.rows[5].cells[1].innerHTML = "NO Signal(0)"; //gps_quality
+		} else if(gps_quality == 1){
+			myTable.rows[5].cells[1].innerHTML = "Signal On(1)"; //gps_quality
+		} else if (gps_quality == 2) {
+			myTable.rows[5].cells[1].innerHTML = "Good Signal(2)"; //gps_quality
+		} else {
+			myTable.rows[5].cells[1].innerHTML = gps_quality; //gps_quality
+		}
+	} 
+	if(gps_utc_flag==0) {
+		myTable.rows[6].cells[1].innerHTML = "N/A";//gps_utc
+	} else {
+		if(gps_utc_hour.toString().length == 1) {
+			gps_utc_hour = "0" + gps_utc_hour.toString();
+		}
+		if(gps_utc_minute.toString().length == 1) {
+			gps_utc_minute = "0" + gps_utc_minute.toString();
+		}
+		if(gps_utc_second.toString().length == 1) {
+			gps_utc_second = "0" + gps_utc_second.toString();
+		}
+		myTable.rows[6].cells[1].innerHTML = gps_utc_hour + ":" 
+				+ gps_utc_minute + ":" + gps_utc_second; //gps_utc
+		}
+	myTable.rows[7].cells[1].innerHTML = parse_double(lat, NAdouble); //latitude
+	myTable.rows[8].cells[1].innerHTML = parse_double(lng, NAdouble); //longtitude
+	if(alt == NAdouble){
+		myTable.rows[9].cells[1].innerHTML = "N/A";
+	} else {
+		myTable.rows[9].cells[1].innerHTML = alt.toString() + " m"; //altitude
+	}
+	if(num_satellite == NAdouble){
+		myTable.rows[10].cells[1].innerHTML = "N/A";
+	} else {
+		myTable.rows[10].cells[1].innerHTML = num_satellite.toString() + "/9"; //num_satellite
+	}	
+	myTable.rows[11].cells[1].innerHTML = parse_double(hdop, NAdouble); //hdop
+	myTable.rows[12].cells[1].innerHTML = parse_double(vdop, NAdouble); //vdop
+	myTable.rows[13].cells[1].innerHTML = parse_double(pdop, NAdouble); //pdop
+	if(date == NAdouble){
+		myTable.rows[14].cells[1].innerHTML = "N/A";
+	} else {
+		date = date.toString();
+		myTable.rows[14].cells[1].innerHTML = date.substr(2,2) + "/" 
+						+ date.substr(0,2) + "/20" + date.substr(4,2); //date
+	}
+	if(v_knot == NAdouble){
+		myTable.rows[15].cells[1].innerHTML = "N/A";
+	} else {
+		myTable.rows[15].cells[1].innerHTML = v_knot.toString() + " knot"; //v_knot
+	}
+	if(v_kph == NAdouble){
+		myTable.rows[16].cells[1].innerHTML = "N/A";
+	} else {
+		myTable.rows[16].cells[1].innerHTML = v_kph.toString() + " kph"; //v_kph
+	}
+	
+	
 }
-
+function parse_double(param, NAdouble){
+	if(param == NAdouble){
+		return "N/A";
+	} else {
+		return param.toString();
+	}
+}
 $(document).ready(function() {
 	
 	function updateTable(taskid){

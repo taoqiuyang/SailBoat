@@ -168,7 +168,7 @@ void updateGPS(string GPS_data) {
             D_GPS_Num_Satellite = strtod(result.at(6).c_str(), NULL);
             GPS_HDOP = result.at(7);
             D_GPS_HDOP = strtod(result.at(7).c_str(), NULL);
-            GPS_Altitude = result.at(8) + result.at(9);
+            GPS_Altitude = result.at(8);
             D_GPS_Altitude = strtod(result.at(8).c_str(), NULL);
             GPS_Altitude_Unit = result.at(9);
         }
@@ -188,11 +188,11 @@ void updateGPS(string GPS_data) {
     } else if (GPS_data_string.substr(0,6) == "$GPVTG" and GPS_Quality != "0" and GPS_Quality != "6") {
         GPS_data_string = GPS_data_string.substr(7);
         vector<string> result = split(GPS_data_string, ',');
-        GPS_VelocityKnot = result.at(4) + result.at(5);
+        GPS_VelocityKnot = result.at(4);
         D_GPS_VelocityKnot = strtod(result.at(4).c_str(), NULL);
         GPS_VelocityKnot_Unit = result.at(5);
         asterisk_idx = result.at(7).find('*');
-        GPS_VelocityKph = result.at(6) + result.at(7).substr(0, asterisk_idx);
+        GPS_VelocityKph = result.at(6);
         D_GPS_VelocityKph = strtod(result.at(6).c_str(), NULL);
         GPS_VelocityKph_Unit = result.at(7).substr(0, asterisk_idx);
     }
@@ -210,24 +210,24 @@ void updateGPS(string GPS_data) {
 void decodePC(string PC_data) {
     string PC_data_string(PC_data);
     if (PC_data_string.substr(0,4) == "@GET") {
-        pc.printf("%s", PC_data_string.c_str());
+        //pc.printf("%s", PC_data_string.c_str());
         PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
         pc.printf("%s\n", decodeCommandGET(PC_data_string).c_str());
     } else if (PC_data_string.substr(0,4) == "@SET") {
-        pc.printf("%s", PC_data_string.c_str());
+        //pc.printf("%s", PC_data_string.c_str());
         PC_data_string = PC_data_string.substr(5, PC_data_string.size()-6);
         string claim = decodeCommandSET(PC_data_string);
         if (claim == "DONE") {
-            pc.printf("Current Path: Longitude, Latitude\n");
+            //pc.printf("Current Path: Longitude, Latitude\n");
             for (int i=0;i<MAX_TASK_SIZE;++i) {
-                pc.printf("              %f, %f\n", Longitude_Path[i], Latitude_Path[i]);
+                //pc.printf("              %f, %f\n", Longitude_Path[i], Latitude_Path[i]);
             }
         }
-        pc.printf("%s\n", claim.c_str());
+        //pc.printf("%s\n", claim.c_str());
     } else if(PC_data_string.substr(0,6) == "@Hello") {
-        pc.printf("Successfully connected to mbed\n");
+        //pc.printf("Successfully connected to mbed\n");
     } else {
-        pc.printf("Not supported command\n");
+        //pc.printf("Not supported command\n");
     }
 }
 
@@ -470,7 +470,7 @@ void update_controller_tmr_ISR2() {
     //Drive servos
     if (autonomous_mode){set_servo_position(rudderServo,rudder_variables[4],-45,0,45,1);}
     
-    pc.printf("%f\n",rudder_variables[4]);
+    //pc.printf("%f\n",rudder_variables[4]);
 }
 
 
