@@ -1,6 +1,25 @@
 var waypoint = [];
 var markers = [];
 
+function show_GPS_pos(lat, lng){
+	var gps_location = new google.maps.LatLng(lat, lng);
+	
+	//make a customed image
+	var pinColor = "00ff00"; //green
+	var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + pinColor,
+		new google.maps.Size(21, 34),
+		new google.maps.Point(0,0),
+		new google.maps.Point(10, 34));
+		
+	var marker = new google.maps.Marker({
+		position: location,
+		animation: google.maps.Animation.DROP,
+		icon: pinImage
+	});
+	
+	marker.setMap(map);
+}
+
 function update_GPS_table(imu_y, imu_p, imu_r, gps_quality, gps_utc_flag, gps_utc_hour, gps_utc_minute, gps_utc_second,
 						lat, lng, alt, num_satellite, hdop, vdop, pdop, date, v_knot, v_kph, NAdouble){
 	var myTable = document.getElementById('gpsTable');
@@ -70,6 +89,7 @@ function update_GPS_table(imu_y, imu_p, imu_r, gps_quality, gps_utc_flag, gps_ut
 	
 	
 }
+
 function parse_double(param, NAdouble){
 	if(param == NAdouble){
 		return "N/A";
@@ -77,6 +97,7 @@ function parse_double(param, NAdouble){
 		return param.toString();
 	}
 }
+
 $(document).ready(function() {
 	
 	function updateTable(taskid){
@@ -108,6 +129,7 @@ $(document).ready(function() {
 		};
 		
 		var map = new google.maps.Map(mapCanvas, mapOptions);
+		window.map = map; //make 'map' global
 		
 		//link map to lat/lng input fields
 		google.maps.event.addListener(map, 'click', function(event){
@@ -148,10 +170,10 @@ $(document).ready(function() {
 			
 			resetCenter();
 			updateTable(taskid);
-			
+				
 			var marker = new google.maps.Marker({
 				position: location,
-				animation: google.maps.Animation.DROP,
+				animation: google.maps.Animation.DROP
 			});
 			
 			if(markers[taskid-1]) {

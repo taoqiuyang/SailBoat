@@ -198,6 +198,11 @@ class Window(QWidget):
 		frame = self.browser.page().currentFrame()
 		frame.evaluateJavaScript(command)
 	
+		#The following code will update boat's location on google map
+		command = "show_GPS_pos(" + lat + "," + lng + ")"
+		frame.evaluateJavaScript(command)
+		
+		
 	#evaluateJavaScript cannot parse string variable
 	def parse_double(self, str):
 		global NAdouble
