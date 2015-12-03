@@ -2,7 +2,8 @@ var waypoint = [];
 var markers = [];
 
 function show_GPS_pos(lat, lng){
-	var gps_location = new google.maps.LatLng(lat, lng);
+	var location = new google.maps.LatLng(lat, lng);
+	map.setCenter(location);
 	
 	//make a customed image
 	var pinColor = "00ff00"; //green
@@ -10,14 +11,15 @@ function show_GPS_pos(lat, lng){
 		new google.maps.Size(21, 34),
 		new google.maps.Point(0,0),
 		new google.maps.Point(10, 34));
-		
-	var marker = new google.maps.Marker({
+
+	var gps_marker = new google.maps.Marker({
 		position: location,
 		animation: google.maps.Animation.DROP,
 		icon: pinImage
 	});
 	
-	marker.setMap(map);
+	markers[5] = gps_marker;
+	markers[5].setMap(map);
 }
 
 function update_GPS_table(imu_y, imu_p, imu_r, gps_quality, gps_utc_flag, gps_utc_hour, gps_utc_minute, gps_utc_second,
@@ -170,7 +172,7 @@ $(document).ready(function() {
 			
 			resetCenter();
 			updateTable(taskid);
-				
+		
 			var marker = new google.maps.Marker({
 				position: location,
 				animation: google.maps.Animation.DROP

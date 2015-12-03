@@ -27,7 +27,7 @@ class Window(QWidget):
 		self.setWindowTitle("Sailboat")
 		
 		self.ser = serial.Serial(
-			port='COM4',\
+			port='COM6',\
 			baudrate=9600,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\
@@ -79,7 +79,7 @@ class Window(QWidget):
 
 	def update_info(self):
 		global NAdouble
-
+		
 		self.ser.write("@GET=IMU_Y#")
 		imu_y = ""
 		while not imu_y:
@@ -180,10 +180,7 @@ class Window(QWidget):
 		while not v_kph:
 			v_kph = self.ser.readline()
 			v_kph = self.parse_double(v_kph)			
-		'''
-		self.textarea.clear()
-		self.textarea.append(content)
-		'''
+		
 		#command = "update_GPS_table1('5')"
 		#command = "update_GPS_table(" + '\'' + imu_y + '\'' + ',\'' + imu_p + '\'' + ',\'' + imu_r + '\'' + ")"
 		command = "update_GPS_table(" + imu_y + "," + imu_p + "," + imu_r + "," + gps_quality + "," \
@@ -195,11 +192,12 @@ class Window(QWidget):
 		#command = 'update_GPS_table(' + "\"" + imu_y + "\"," + "\"" + imu_p + "\"," + "\"" + imu_r + "\"," + "\"" + gps_quality + "\"," + "\"" + lat + "\"," + "\"" + lng + "\"," + "\"" + alt + "\""')'
 		
 		print command
+		
 		frame = self.browser.page().currentFrame()
 		frame.evaluateJavaScript(command)
-	
+		
 		#The following code will update boat's location on google map
-		command = "show_GPS_pos(" + lat + "," + lng + ")"
+		command = "show_GPS_pos(" + str(lat) + "," + str(lng) + ")"
 		frame.evaluateJavaScript(command)
 		
 		
