@@ -27,7 +27,7 @@ class Window(QWidget):
 		self.setWindowTitle("Sailboat")
 		
 		self.ser = serial.Serial(
-			port='COM6',\
+			port='COM4',\
 			baudrate=9600,\
 			parity=serial.PARITY_NONE,\
 			stopbits=serial.STOPBITS_ONE,\
